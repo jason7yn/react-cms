@@ -1,24 +1,5 @@
 @import "~antd/dist/antd.css";
-.login-form {
-  max-width: 100%;
-  max-height: 50vh;
-}
-.login-page-content {
-  height: 100vh;
-  align-content: center;
-}
-.login-form-button {
-  width: 100%;
-}
-.wrapper-row {
-  display: flex;
-  justify-content: center;
-  height: 100%;
-}
-.login-form-title {
+/* .login-form-title {
   text-align: center;
-  margin-top: 2%;
-  margin-bottom: 4%;
-  font-weight: 600;
-  height: 2%;
-}
+  letter-spacing: -2px;
+} */
