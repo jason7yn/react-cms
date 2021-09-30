@@ -1,15 +1,32 @@
 import { Form, Input, Button, Checkbox, Radio, Col } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import Link from "next/link";
+import axios from "axios";
+import AES from "crypto-js/aes";
+import { useRouter } from "next/router";
 
 const titleStyle = {
   textAlign: "center",
   letterSpacing: "-2px",
 };
+const url = "https://cms.chtoma.com/api/login";
 
 export default function Login() {
+  const router = useRouter();
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    const para = {
+      ...values,
+      password: AES.encrypt(values.password, "cms").toString(),
+    };
+    axios
+      .post(url, para)
+      .then((res) => {
+        localStorage.setItem("user", res.data.data);
+        router.push("/dashboard");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
