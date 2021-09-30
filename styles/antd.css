@@ -10,3 +10,8 @@
 .trigger:hover {
   color: #1890ff;
 }
+.dashboard-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

@@ -15,7 +15,7 @@ click login button
 
 ### dashboard page
 
-side menu
+side menu -- fixed position
 
 1.  logo
 2.  overview -- default
@@ -25,8 +25,14 @@ side menu
 6.  Message
 7.  button --> side menu collapsed, uncollapsed
 
-header menu
+header menu -- fixed position
 
 1.  button --> side menu collapsed, uncollapsed
 2.  notification button
 3.  logout button
+    1. hover-->pop up logout button
+    2. click pop up button
+    3. post logout request with auth headers(bearer token)
+    4. if success -- clear localStorage, redirect to home page
+
+content
