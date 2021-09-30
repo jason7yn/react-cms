@@ -7,24 +7,24 @@ import { useRouter } from "next/router";
 
 const titleStyle = {
   textAlign: "center",
-  letterSpacing: "-2px",
+  letterSpacing: "-2px"
 };
 const url = "https://cms.chtoma.com/api/login";
 
 export default function Login() {
   const router = useRouter();
-  const onFinish = (values) => {
+  const onFinish = values => {
     const para = {
       ...values,
-      password: AES.encrypt(values.password, "cms").toString(),
+      password: AES.encrypt(values.password, "cms").toString()
     };
     axios
       .post(url, para)
-      .then((res) => {
-        localStorage.setItem("user", res.data.data);
+      .then(res => {
+        localStorage.setItem("user", JSON.stringify(res.data.data));
         router.push("/dashboard");
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   };
@@ -40,7 +40,7 @@ export default function Login() {
           className="login-form"
           initialValues={{
             role: "student",
-            remember: true,
+            remember: true
           }}
           onFinish={onFinish}
         >
@@ -56,12 +56,12 @@ export default function Login() {
             rules={[
               {
                 required: true,
-                message: "'email' is required",
+                message: "'email' is required"
               },
               {
                 type: "email",
-                message: "'email' is not a valid email",
-              },
+                message: "'email' is not a valid email"
+              }
             ]}
           >
             <Input
@@ -74,16 +74,16 @@ export default function Login() {
             rules={[
               {
                 required: true,
-                message: "Please input password",
+                message: "Please input password"
               },
               {
                 min: 4,
-                message: "password must be between 4 and 16 characters",
+                message: "password must be between 4 and 16 characters"
               },
               {
                 max: 16,
-                message: "password must be between 4 and 16 characters",
-              },
+                message: "password must be between 4 and 16 characters"
+              }
             ]}
           >
             <Input

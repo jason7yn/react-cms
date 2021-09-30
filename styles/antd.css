@@ -1,5 +1,12 @@
 @import "~antd/dist/antd.css";
-/* .login-form-title {
-  text-align: center;
-  letter-spacing: -2px;
-} */
+.trigger {
+  padding: 0 24px;
+  font-size: 18px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: color 0.3s;
+  color: white;
+}
+.trigger:hover {
+  color: #1890ff;
+}
