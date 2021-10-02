@@ -19,9 +19,9 @@ side menu -- fixed position
 
 1.  logo
 2.  overview -- default
-3.  student
-4.  teacher
-5.  course
+3.  student - sub
+4.  teacher - sub
+5.  course - sub
 6.  Message
 7.  button --> side menu collapsed, uncollapsed
 
