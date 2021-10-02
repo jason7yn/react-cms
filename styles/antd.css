@@ -15,3 +15,16 @@
   flex-direction: row;
   justify-content: space-between;
 }
+.logo {
+  height: 32px;
+  margin: 16px;
+  background: #001529;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.logo h3 {
+  color: inherit;
+  margin: 0;
+}

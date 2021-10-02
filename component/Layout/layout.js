@@ -14,18 +14,17 @@ import {
   FileAddOutlined,
   EditOutlined
 } from "@ant-design/icons";
-import { useState } from "react";
-import React from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { useState } from "react";
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 const url = "https://cms.chtoma.com/api/logout";
-const token = JSON.parse(localStorage.getItem("user")).token;
-const authHeader = { Authorization: `Bearer ${token}` };
 
-export default function DashBoard() {
+export default function AppLayout(props) {
+  const token = JSON.parse(props.localStorage.getItem("user")).token;
+  const authHeader = { Authorization: `Bearer ${token}` };
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
   const onCollapsed = () => {
@@ -35,7 +34,7 @@ export default function DashBoard() {
     axios
       .post(url, {}, { headers: authHeader })
       .then(() => {
-        localStorage.removeItem("user");
+        props.localStorage.removeItem("user");
         router.push("/");
       })
       .catch(error => {
@@ -45,7 +44,9 @@ export default function DashBoard() {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapsed}>
-        <div className="logo"></div>
+        <div className="logo">
+          <h3>CMS</h3>
+        </div>
         <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
           <Menu.Item icon={<DashboardOutlined />}>Overview</Menu.Item>
           <SubMenu icon={<SolutionOutlined />} title="Student">
@@ -64,13 +65,10 @@ export default function DashBoard() {
       </Sider>
       <Layout>
         <Header className="dashboard-header">
-          {React.createElement(
-            collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-            {
-              className: "trigger",
-              onClick: onCollapsed
-            }
-          )}
+          <a onClick={onCollapsed}>
+            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          </a>
+
           <Row align="middle">
             <BellOutlined style={{ color: "white" }}></BellOutlined>
 
@@ -87,7 +85,7 @@ export default function DashBoard() {
             <Breadcrumb.Item>CMS Manager System</Breadcrumb.Item>
             <Breadcrumb.Item>Overview</Breadcrumb.Item>
           </Breadcrumb>
-          <div>Statistics</div>
+          {props.children}
         </Content>
       </Layout>
     </Layout>
