@@ -5,19 +5,19 @@ import { useRouter } from "next/router";
 import apiService from "../services/api-service";
 const titleStyle = {
   textAlign: "center",
-  letterSpacing: "-2px"
+  letterSpacing: "-2px",
 };
 
 export default function Login() {
   const router = useRouter();
-  const onFinish = values => {
+  const onFinish = (values) => {
     apiService
       .login(values)
-      .then(res => {
+      .then((res) => {
         localStorage.setItem("user", JSON.stringify(res.data));
         router.push("/dashboard");
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
@@ -33,7 +33,7 @@ export default function Login() {
           className="login-form"
           initialValues={{
             role: "student",
-            remember: true
+            remember: true,
           }}
           onFinish={onFinish}
         >
@@ -49,12 +49,12 @@ export default function Login() {
             rules={[
               {
                 required: true,
-                message: "'email' is required"
+                message: "'email' is required",
               },
               {
                 type: "email",
-                message: "'email' is not a valid email"
-              }
+                message: "'email' is not a valid email",
+              },
             ]}
           >
             <Input
@@ -67,16 +67,16 @@ export default function Login() {
             rules={[
               {
                 required: true,
-                message: "Please input password"
+                message: "Please input password",
               },
               {
                 min: 4,
-                message: "password must be between 4 and 16 characters"
+                message: "password must be between 4 and 16 characters",
               },
               {
                 max: 16,
-                message: "password must be between 4 and 16 characters"
-              }
+                message: "password must be between 4 and 16 characters",
+              },
             ]}
           >
             <Input
