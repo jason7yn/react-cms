@@ -15,31 +15,23 @@ import {
   EditOutlined
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
-import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import apiService from "../../services/api-service";
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
-const url = "https://cms.chtoma.com/api/logout";
 
 export default function AppLayout(props) {
-  const token = JSON.parse(props.localStorage.getItem("user")).token;
-  const authHeader = { Authorization: `Bearer ${token}` };
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
   const onCollapsed = () => {
     setCollapsed(!collapsed);
   };
   const logout = () => {
-    axios
-      .post(url, {}, { headers: authHeader })
-      .then(() => {
-        props.localStorage.removeItem("user");
-        router.push("/");
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    apiService.logout().then(() => {
+      localStorage.removeItem("user");
+      router.push("/");
+    });
   };
   return (
     <Layout style={{ minHeight: "100vh" }}>
