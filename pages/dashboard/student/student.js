@@ -1,65 +1,71 @@
 import { Row, Col, Button, Input, Table, Space } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import apiService from "../../../services/api-service";
 import { useState, useEffect } from "react";
 const { Search } = Input;
 const columns = [
   {
     title: "No",
-    dataIndex: "id"
+    dataIndex: "id",
   },
   {
     title: "Name",
     dataIndex: "name",
     defaultSortOrder: "descend",
-    sorter: () => {}
+    sorter: () => {},
+    render: (text) => <a>{text}</a>,
   },
   {
     title: "Area",
     dataIndex: "country",
+    width: "10%",
     filters: [
       {
         text: "China",
-        value: "China"
+        value: "China",
       },
       {
         text: "New Zealand ",
-        value: "New Zealand"
+        value: "New Zealand",
       },
       {
         text: "Canada",
-        value: "Canada"
+        value: "Canada",
       },
       {
         text: "Australia",
-        value: "Australia"
-      }
-    ]
+        value: "Australia",
+      },
+    ],
   },
   {
     title: "Email",
-    dataIndex: "email"
+    dataIndex: "email",
   },
   {
     title: "Selected Curriculum",
-    dataIndex: "curriculum"
+    dataIndex: "courses",
+    width: "25%",
+    render: (courses) => courses.map((course) => `${course.name},`),
   },
   {
     title: "Student Type",
-    dataIndex: "type.name",
+    dataIndex: "type",
     filters: [
       {
         text: "developer",
-        value: "developer"
+        value: "developer",
       },
       {
         text: "tester",
-        value: "tester"
-      }
-    ]
+        value: "tester",
+      },
+    ],
+    render: (type) => (type ? type["name"] : ""),
   },
   {
     title: "Join Time",
-    dataIndex: "join"
+    dataIndex: "join",
   },
   {
     title: "Action",
@@ -69,35 +75,34 @@ const columns = [
         <a>Edit</a>
         <a>Delete</a>
       </Space>
-    )
-  }
+    ),
+  },
 ];
-const data = [];
-for (let i = 0; i < 30; i++) {
-  data.push({
-    no: i,
-    name: `student ${i}`,
-    area: "Australia",
-    email: "abc@bcd.com",
-    curriculum: "Dr ABC",
-    type: "developer",
-    join: "over 31 years ago"
-  });
-}
 
 export default function Student() {
   const [studentData, setStudentData] = useState([]);
+  const [page, setPage] = useState({ currentPage: 1, pageSize: 20 });
+
   useEffect(() => {
-    apiService.get("students?page=1&limit=20").then(res => {
-      setStudentData(res.data.students);
-    });
-  }, []);
+    apiService
+      .get(`students?page=${page.currentPage}&limit=${page.pageSize}`)
+      .then((res) => {
+        setStudentData(res.data);
+      });
+  }, [page]);
+
+  const handlePageChange = (current, pageSize) => {
+    console.log(current, pageSize);
+    setPage({ currentPage: current, pageSize: pageSize });
+  };
 
   return (
     <div className="student-list-wrapper">
-      <Row justify="space-between">
-        <Col>
-          <Button type="primary"> + Add</Button>
+      <Row justify="space-between" className="student-list-header">
+        <Col span={8}>
+          <Button type="primary" icon={<PlusOutlined />}>
+            Add
+          </Button>
         </Col>
         <Col span={6}>
           <Search placeholder="input search text" />
@@ -106,8 +111,13 @@ export default function Student() {
       <Col span={24}>
         <Table
           columns={columns}
-          dataSource={studentData}
-          pagination={{ pageSize: 20 }}
+          dataSource={studentData.students}
+          pagination={{
+            pageSize: page.pageSize,
+            showSizeChanger: true,
+            onChange: handlePageChange,
+            total: `${studentData.total}`,
+          }}
         />
       </Col>
     </div>

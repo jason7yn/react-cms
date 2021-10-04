@@ -2,10 +2,10 @@ import axios from "axios";
 import AES from "crypto-js/aes";
 
 const httpService = axios.create({
-  baseURL: "https://cms.chtoma.com/api/"
+  baseURL: "https://cms.chtoma.com/api/",
 });
 
-httpService.interceptors.request.use(function(config) {
+httpService.interceptors.request.use(function (config) {
   if (localStorage.getItem("user")) {
     let token = JSON.parse(localStorage.getItem("user")).token;
     config.headers["Authorization"] = `Bearer ${token}`;
@@ -13,18 +13,18 @@ httpService.interceptors.request.use(function(config) {
   return config;
 });
 
-export default {
+const apiService = {
   login(param) {
     return new Promise((resolve, reject) => {
       httpService
         .post("login", {
           ...param,
-          password: AES.encrypt(param.password, "cms").toString()
+          password: AES.encrypt(param.password, "cms").toString(),
         })
-        .then(res => {
+        .then((res) => {
           resolve(res.data);
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error);
         });
     });
@@ -36,7 +36,7 @@ export default {
         .then(() => {
           resolve();
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error);
         });
     });
@@ -45,12 +45,13 @@ export default {
     return new Promise((resolve, reject) => {
       httpService
         .get(url)
-        .then(res => {
+        .then((res) => {
           resolve(res.data);
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error);
         });
     });
-  }
+  },
 };
+export default apiService;
