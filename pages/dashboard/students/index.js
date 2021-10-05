@@ -5,10 +5,12 @@ import { useState, useEffect } from "react";
 import AppLayout from "../../../component/Layout/layout";
 import { formatDistanceToNow } from "date-fns";
 const { Search } = Input;
+let counter = 0;
 const columns = [
   {
     title: "No",
-    dataIndex: "id",
+    // key: "index",
+    render: (arg1, arg2, index) => index + 1,
   },
   {
     title: "Name",
