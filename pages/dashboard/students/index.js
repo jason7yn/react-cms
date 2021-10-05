@@ -75,9 +75,8 @@ const columns = [
   {
     title: "Join Time",
     dataIndex: "createdAt",
-    render: (value) => {
-      formatDistanceToNow(new Date(value), { addSuffix: true });
-    },
+    render: (value) =>
+      formatDistanceToNow(new Date(value), { addSuffix: true }),
   },
   {
     title: "Action",
