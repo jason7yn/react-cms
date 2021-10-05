@@ -3,6 +3,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import apiService from "../../../services/api-service";
 import { useState, useEffect } from "react";
 import AppLayout from "../../../component/Layout/layout";
+import { formatDistanceToNow } from "date-fns";
 const { Search } = Input;
 const columns = [
   {
@@ -73,7 +74,10 @@ const columns = [
   },
   {
     title: "Join Time",
-    dataIndex: "join",
+    dataIndex: "createdAt",
+    render: (value) => {
+      formatDistanceToNow(new Date(value), { addSuffix: true });
+    },
   },
   {
     title: "Action",

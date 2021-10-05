@@ -46,7 +46,7 @@ export default function AppLayout(props) {
           </Menu.Item>
           <SubMenu icon={<SolutionOutlined />} title="Student">
             <Menu.Item icon={<TeamOutlined />}>
-              <Link href="/dashboard/student">Student List</Link>
+              <Link href="/dashboard/students">Student List</Link>
             </Menu.Item>
           </SubMenu>
           <SubMenu icon={<DeploymentUnitOutlined />} title="Teacher">
