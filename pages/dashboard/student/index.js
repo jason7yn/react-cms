@@ -2,6 +2,7 @@ import { Row, Col, Button, Input, Table, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import apiService from "../../../services/api-service";
 import { useState, useEffect } from "react";
+import AppLayout from "../../../component/Layout/layout";
 const { Search } = Input;
 const columns = [
   {
@@ -46,7 +47,14 @@ const columns = [
     title: "Selected Curriculum",
     dataIndex: "courses",
     width: "25%",
-    render: (courses) => courses.map((course) => `${course.name},`),
+    render: (courses) =>
+      courses.map((course, index) => {
+        if (index < courses.length - 1) {
+          return `${course.name},`;
+        } else {
+          return `${course.name}`;
+        }
+      }),
   },
   {
     title: "Student Type",
@@ -97,29 +105,31 @@ export default function Student() {
   };
 
   return (
-    <div className="student-list-wrapper">
-      <Row justify="space-between" className="student-list-header">
-        <Col span={8}>
-          <Button type="primary" icon={<PlusOutlined />}>
-            Add
-          </Button>
+    <AppLayout>
+      <div className="student-list-wrapper">
+        <Row justify="space-between" className="student-list-header">
+          <Col span={8}>
+            <Button type="primary" icon={<PlusOutlined />}>
+              Add
+            </Button>
+          </Col>
+          <Col span={6}>
+            <Search placeholder="input search text" />
+          </Col>
+        </Row>
+        <Col span={24}>
+          <Table
+            columns={columns}
+            dataSource={studentData.students}
+            pagination={{
+              pageSize: page.pageSize,
+              showSizeChanger: true,
+              onChange: handlePageChange,
+              total: `${studentData.total}`,
+            }}
+          />
         </Col>
-        <Col span={6}>
-          <Search placeholder="input search text" />
-        </Col>
-      </Row>
-      <Col span={24}>
-        <Table
-          columns={columns}
-          dataSource={studentData.students}
-          pagination={{
-            pageSize: page.pageSize,
-            showSizeChanger: true,
-            onChange: handlePageChange,
-            total: `${studentData.total}`,
-          }}
-        />
-      </Col>
-    </div>
+      </div>
+    </AppLayout>
   );
 }

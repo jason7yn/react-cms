@@ -12,11 +12,12 @@ import {
   TeamOutlined,
   ProjectOutlined,
   FileAddOutlined,
-  EditOutlined
+  EditOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import apiService from "../../services/api-service";
+import Link from "next/link";
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -40,9 +41,13 @@ export default function AppLayout(props) {
           <h3>CMS</h3>
         </div>
         <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-          <Menu.Item icon={<DashboardOutlined />}>Overview</Menu.Item>
+          <Menu.Item icon={<DashboardOutlined />}>
+            <Link href="/dashboard">Overview</Link>
+          </Menu.Item>
           <SubMenu icon={<SolutionOutlined />} title="Student">
-            <Menu.Item icon={<TeamOutlined />}>Student List</Menu.Item>
+            <Menu.Item icon={<TeamOutlined />}>
+              <Link href="/dashboard/student">Student List</Link>
+            </Menu.Item>
           </SubMenu>
           <SubMenu icon={<DeploymentUnitOutlined />} title="Teacher">
             <Menu.Item icon={<TeamOutlined />}>Teacher List</Menu.Item>
