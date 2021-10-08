@@ -43,6 +43,13 @@ children components
 
 1. add new student button
    1. - Add blue color
+        Actions
+   - click -> popup modal contains a form
+     popup modal
+   - 2 input fields
+   - 2 drop downs
+   - add button
+   - cancel button
 2. search bar
    2.1 input element - hover border color blue - placeholder - Search by name
    2.2 search button - hover border color blue

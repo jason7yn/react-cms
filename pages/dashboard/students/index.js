@@ -8,6 +8,7 @@ import {
   Modal,
   Form,
   Select,
+  message
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import apiService from "../../../services/api-service";
@@ -16,26 +17,25 @@ import AppLayout from "../../../component/Layout/layout";
 import { formatDistanceToNow } from "date-fns";
 const { Search } = Input;
 const { Option } = Select;
-let counter = 0;
+
 const columns = [
   {
     title: "No",
     key: "no",
-    render: (arg1, arg2, index) => index + 1,
+    render: (arg1, arg2, index) => index + 1
   },
   {
     key: "name",
     title: "Name",
     dataIndex: "name",
-    defaultSortOrder: "descend",
     sorter: (a, b) => {
       if (a.name < b.name) {
-        return 1;
-      } else {
         return -1;
+      } else {
+        return 1;
       }
     },
-    render: (text) => <a>{text}</a>,
+    render: text => <a>{text}</a>
   },
   {
     key: "area",
@@ -45,41 +45,41 @@ const columns = [
     filters: [
       {
         text: "China",
-        value: "China",
+        value: "China"
       },
       {
         text: "New Zealand ",
-        value: "New Zealand",
+        value: "New Zealand"
       },
       {
         text: "Canada",
-        value: "Canada",
+        value: "Canada"
       },
       {
         text: "Australia",
-        value: "Australia",
-      },
+        value: "Australia"
+      }
     ],
-    onFilter: (value, record) => record.country.indexOf(value) === 0,
+    onFilter: (value, record) => record.country.indexOf(value) === 0
   },
   {
     key: "email",
     title: "Email",
-    dataIndex: "email",
+    dataIndex: "email"
   },
   {
     key: "curriculum",
     title: "Selected Curriculum",
     dataIndex: "courses",
     width: "25%",
-    render: (courses) =>
+    render: courses =>
       courses.map((course, index) => {
         if (index < courses.length - 1) {
           return `${course.name},`;
         } else {
           return `${course.name}`;
         }
-      }),
+      })
   },
   {
     key: "type",
@@ -88,22 +88,21 @@ const columns = [
     filters: [
       {
         text: "developer",
-        value: "developer",
+        value: "developer"
       },
       {
         text: "tester",
-        value: "tester",
-      },
+        value: "tester"
+      }
     ],
     onFilter: (value, record) => record.type.name.indexOf(value) === 0,
-    render: (type) => (type ? type["name"] : ""),
+    render: type => (type ? type["name"] : "")
   },
   {
     key: "join",
     title: "Join Time",
     dataIndex: "createdAt",
-    render: (value) =>
-      formatDistanceToNow(new Date(value), { addSuffix: true }),
+    render: value => formatDistanceToNow(new Date(value), { addSuffix: true })
   },
   {
     title: "Action",
@@ -113,28 +112,43 @@ const columns = [
         <a>Edit</a>
         <a>Delete</a>
       </Space>
-    ),
-  },
+    )
+  }
 ];
 
 export default function Student() {
   const [studentData, setStudentData] = useState([]);
   const [page, setPage] = useState({ currentPage: 1, pageSize: 20 });
   const [visible, setVisible] = useState(false);
+  const [form] = Form.useForm();
   useEffect(() => {
     apiService
       .get(`students?page=${page.currentPage}&limit=${page.pageSize}`)
-      .then((res) => {
+      .then(res => {
         setStudentData(res.data);
       });
   }, [page]);
 
   const handlePageChange = (current, pageSize) => {
-    console.log(current, pageSize);
     setPage({ currentPage: current, pageSize: pageSize });
   };
   const showModal = () => {
     setVisible(true);
+  };
+  const handleCancel = () => {
+    setVisible(false);
+  };
+  const handleFormSubmit = () => {
+    //tester = 1 developer = 2
+    form.validateFields().then(values => {
+      apiService
+        .addStudent({ ...values, type: values.type == "tester" ? 1 : 2 })
+        .then(() => {
+          setVisible(false);
+          message.success("success");
+        })
+        .catch(error => console.log(error));
+    });
   };
 
   return (
@@ -148,16 +162,23 @@ export default function Student() {
             <Modal
               visible={visible}
               title="Add Student"
+              onCancel={handleCancel}
+              destroyOnClose={true}
               footer={[
-                <Button key="submit" type="primary">
+                <Button
+                  key="submit"
+                  htmlType="submit"
+                  type="primary"
+                  onClick={handleFormSubmit}
+                >
                   Add
                 </Button>,
-                <Button key="cancel" type="default">
+                <Button key="cancel" type="default" onClick={handleCancel}>
                   Cancel
-                </Button>,
+                </Button>
               ]}
             >
-              <Form labelAlign="left">
+              <Form labelCol={{ span: 6 }} form={form}>
                 <Form.Item
                   label="Name"
                   name="name"
@@ -168,20 +189,23 @@ export default function Student() {
                 <Form.Item
                   label="Email"
                   name="email"
-                  rules={[{ required: true }]}
+                  rules={[
+                    { required: true },
+                    { type: "email", message: `'email' is not valid email` }
+                  ]}
                 >
-                  <Input placeholder="email" />
+                  <Input placeholder="email" defaultValue="" />
                 </Form.Item>
                 <Form.Item
                   label="Area"
-                  name="area"
+                  name="country"
                   rules={[{ required: true }]}
                 >
                   <Select>
-                    <Option>China</Option>
-                    <Option>New Zealand</Option>
-                    <Option>Canada</Option>
-                    <Option>Australia</Option>
+                    <Option value="China">China</Option>
+                    <Option value="New Zealand">New Zealand</Option>
+                    <Option value="Canada">Canada</Option>
+                    <Option value="Australia">Australia</Option>
                   </Select>
                 </Form.Item>
                 <Form.Item
@@ -190,8 +214,8 @@ export default function Student() {
                   rules={[{ required: true }]}
                 >
                   <Select>
-                    <Option>Tester</Option>
-                    <Option>Developer</Option>
+                    <Option value="tester">Tester</Option>
+                    <Option value="developer">Developer</Option>
                   </Select>
                 </Form.Item>
               </Form>
@@ -209,7 +233,7 @@ export default function Student() {
               pageSize: page.pageSize,
               showSizeChanger: true,
               onChange: handlePageChange,
-              total: `${studentData.total}`,
+              total: `${studentData.total}`
             }}
           />
         </Col>
