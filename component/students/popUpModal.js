@@ -1,16 +1,16 @@
-import { Modal, Form, Input, Button, Select } from "antd";
+import { Modal, Form, Input, Button, Select, message } from "antd";
 const { Option } = Select;
 import { useState, useEffect } from "react";
-// component is unfinshed
-export default function PopUpModal(props) {
-  const [visible, setVisible] = useState(props.visibility);
-  useEffect(() => {
-    setVisible(props.visibility);
-  }, [visible]);
-  const [form] = Form.useForm();
+import apiService from "../../services/api-service";
 
+export default function PopUpModal(props) {
+  const [visibility, setVisibility] = useState(props.visibility);
+  const [form] = Form.useForm();
+  useEffect(() => {
+    setVisibility(props.visibility);
+  }, [props.addStudentClick]);
   const handleCancel = () => {
-    setVisible(false);
+    setVisibility(false);
   };
   const handleFormSubmit = () => {
     //tester = 1 developer = 2
@@ -18,7 +18,7 @@ export default function PopUpModal(props) {
       apiService
         .addStudent({ ...values, type: values.type == "tester" ? 1 : 2 })
         .then(() => {
-          setVisible(false);
+          setVisibility(false);
           message.success("success");
         })
         .catch(error => console.log(error));
@@ -26,7 +26,7 @@ export default function PopUpModal(props) {
   };
   return (
     <Modal
-      visible={visible}
+      visible={visibility}
       title="Add Student"
       onCancel={handleCancel}
       destroyOnClose={true}
