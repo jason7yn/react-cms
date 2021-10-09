@@ -4,30 +4,60 @@ import { useState, useEffect } from "react";
 import apiService from "../../services/api-service";
 
 export default function PopUpModal(props) {
-  const [visibility, setVisibility] = useState(props.visibility);
+  const [visibility, setVisibility] = useState(props.modalProps.visibility);
   const [form] = Form.useForm();
+  const [defaultValue, setDefaultValue] = useState({});
+  const record = props.modalProps.record ? props.modalProps.record : {};
   useEffect(() => {
-    setVisibility(props.visibility);
-  }, [props.addStudentClick]);
+    setVisibility(props.modalProps.visibility);
+    if (props.modalProps.type == "Add") {
+      setDefaultValue({
+        name: "",
+        email: "",
+        country: "",
+        buttonText: "Add",
+      });
+    } else
+      setDefaultValue({
+        name: record.name,
+        email: record.email,
+        country: record.country,
+        buttonText: "Update",
+      });
+  }, [props.counter]);
   const handleCancel = () => {
     setVisibility(false);
   };
   const handleFormSubmit = () => {
     //tester = 1 developer = 2
-    form.validateFields().then(values => {
-      apiService
-        .addStudent({ ...values, type: values.type == "tester" ? 1 : 2 })
-        .then(() => {
-          setVisibility(false);
-          message.success("success");
-        })
-        .catch(error => console.log(error));
+    form.validateFields().then((values) => {
+      if (props.modalProps.type == "Add") {
+        apiService
+          .addStudent({ ...values, type: values.type == "tester" ? 1 : 2 })
+          .then(() => {
+            setVisibility(false);
+            message.success("success");
+          })
+          .catch((error) => console.log(error));
+      } else {
+        apiService
+          .updateStudent({
+            ...values,
+            type: values.type == "tester" ? 1 : 2,
+          })
+          .then(() => {
+            setVisibility(false);
+            message.success("success");
+          })
+          .catch((error) => console.log(error));
+      }
     });
   };
+
   return (
     <Modal
       visible={visibility}
-      title="Add Student"
+      title={`${props.modalProps.type} Student`}
       onCancel={handleCancel}
       destroyOnClose={true}
       footer={[
@@ -37,29 +67,29 @@ export default function PopUpModal(props) {
           type="primary"
           onClick={handleFormSubmit}
         >
-          Add
+          {defaultValue.buttonText}
         </Button>,
         <Button key="cancel" type="default" onClick={handleCancel}>
           Cancel
-        </Button>
+        </Button>,
       ]}
     >
       <Form labelCol={{ span: 6 }} form={form}>
         <Form.Item label="Name" name="name" rules={[{ required: true }]}>
-          <Input placeholder="student name" />
+          <Input placeholder="student name" defaultValue={defaultValue.name} />
         </Form.Item>
         <Form.Item
           label="Email"
           name="email"
           rules={[
             { required: true },
-            { type: "email", message: `'email' is not valid email` }
+            { type: "email", message: `'email' is not valid email` },
           ]}
         >
-          <Input placeholder="email" defaultValue="" />
+          <Input placeholder="email" defaultValue={defaultValue.email} />
         </Form.Item>
         <Form.Item label="Area" name="country" rules={[{ required: true }]}>
-          <Select>
+          <Select defaultValue={defaultValue.country}>
             <Option value="China">China</Option>
             <Option value="New Zealand">New Zealand</Option>
             <Option value="Canada">Canada</Option>
@@ -71,7 +101,7 @@ export default function PopUpModal(props) {
           name="type"
           rules={[{ required: true }]}
         >
-          <Select>
+          <Select defaultValue="">
             <Option value="tester">Tester</Option>
             <Option value="developer">Developer</Option>
           </Select>
