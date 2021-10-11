@@ -34,15 +34,10 @@ export default function ModalForm(props) {
           })
           .then(() => {
             cancel();
-            console.log({
-              ...student,
-              ...values,
-              type: values.type == "tester" ? 1 : 2
-            });
             update({
               ...student,
               ...values,
-              type: values.type == "tester" ? 1 : 2
+              type: { id: values.type == "tester" ? 1 : 2, name: values.type }
             });
             message.success("success");
           })
