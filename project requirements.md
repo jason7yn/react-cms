@@ -104,10 +104,3 @@ children components
       - ok button
    7. Join time(unclickable)
    8. Action
-
-activity = {
-type:edit or add
-visibility: true
-record:record
-counter:count
-}

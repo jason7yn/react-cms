@@ -1,10 +1,11 @@
-import { Row, Col, Button, Input, Table, Space } from "antd";
+import { Row, Col, Button, Input, Table, Space, Form } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import AppLayout from "../../../component/Layout/layout";
 import { formatDistanceToNow } from "date-fns";
-import PopUpModal from "../../../component/students/popUpModal";
+import ModalForm from "../../../component/students/modalForm";
 import apiService from "../../../services/api-service";
+
 const { Search } = Input;
 
 export default function Student() {
@@ -114,12 +115,10 @@ export default function Student() {
       },
     },
   ];
-
   const [studentData, setStudentData] = useState([]);
   const [page, setPage] = useState({ currentPage: 1, pageSize: 20 });
-  const [count, setCount] = useState(0);
-  const [modalProps, setModalProps] = useState({ visibility: false });
-
+  const [visibility, setVisibility] = useState(false);
+  const [formValues, setFormValues] = useState({});
   useEffect(() => {
     apiService
       .get(`students?page=${page.currentPage}&limit=${page.pageSize}`)
@@ -132,19 +131,31 @@ export default function Student() {
     setPage({ currentPage: current, pageSize: pageSize });
   };
   const addStudent = () => {
-    setCount(count + 1);
-    setModalProps({
+    setVisibility(true);
+    setFormValues({
       type: "Add",
-      visibility: true,
+      student: {
+        name: "",
+        country: "",
+        email: "",
+        type: "",
+      },
     });
   };
   const editStudent = (record) => {
-    setCount(count + 1);
-    setModalProps({
+    setVisibility(true);
+    setFormValues({
       type: "Edit",
-      visibility: true,
-      record: record,
+      student: {
+        name: record.name,
+        email: record.email,
+        country: record.country,
+        type: "",
+      },
     });
+  };
+  const canel = () => {
+    setVisibility(false);
   };
   return (
     <AppLayout>
@@ -154,7 +165,11 @@ export default function Student() {
             <Button type="primary" icon={<PlusOutlined />} onClick={addStudent}>
               Add
             </Button>
-            <PopUpModal counter={count} modalProps={modalProps} />
+            <ModalForm
+              visible={visibility}
+              cancel={canel}
+              formValues={formValues}
+            />
           </Col>
           <Col span={6}>
             <Search placeholder="input search text" />
