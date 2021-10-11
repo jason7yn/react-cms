@@ -2,10 +2,10 @@ import axios from "axios";
 import AES from "crypto-js/aes";
 
 const httpService = axios.create({
-  baseURL: "https://cms.chtoma.com/api/",
+  baseURL: "https://cms.chtoma.com/api/"
 });
 
-httpService.interceptors.request.use(function (config) {
+httpService.interceptors.request.use(function(config) {
   if (localStorage.getItem("user")) {
     let token = JSON.parse(localStorage.getItem("user")).token;
     config.headers["Authorization"] = `Bearer ${token}`;
@@ -19,12 +19,12 @@ const apiService = {
       httpService
         .post("login", {
           ...param,
-          password: AES.encrypt(param.password, "cms").toString(),
+          password: AES.encrypt(param.password, "cms").toString()
         })
-        .then((res) => {
+        .then(res => {
           resolve(res.data);
         })
-        .catch((error) => {
+        .catch(error => {
           reject(error);
         });
     });
@@ -36,19 +36,7 @@ const apiService = {
         .then(() => {
           resolve();
         })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  },
-  get(url) {
-    return new Promise((resolve, reject) => {
-      httpService
-        .get(url)
-        .then((res) => {
-          resolve(res.data);
-        })
-        .catch((error) => {
+        .catch(error => {
           reject(error);
         });
     });
@@ -57,10 +45,10 @@ const apiService = {
     return new Promise((resolve, reject) => {
       httpService
         .post("students", param)
-        .then((res) => {
+        .then(res => {
           resolve(res.data);
         })
-        .catch((error) => {
+        .catch(error => {
           reject(error);
         });
     });
@@ -69,13 +57,37 @@ const apiService = {
     return new Promise((resolve, reject) => {
       httpService
         .put("students", param)
-        .then((res) => {
+        .then(res => {
           resolve(res.data);
         })
-        .catch((error) => {
+        .catch(error => {
           reject(error);
         });
     });
   },
+  deleteStudent(url) {
+    return new Promise((resolve, reject) => {
+      httpService
+        .delete(url)
+        .then(res => {
+          resolve(res.data);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  },
+  getStudent(param) {
+    return new Promise((resolve, reject) => {
+      httpService
+        .get("students", { params: param })
+        .then(res => {
+          resolve(res.data);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
 };
 export default apiService;

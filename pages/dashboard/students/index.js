@@ -1,10 +1,20 @@
-import { Row, Col, Button, Input, Table, Space, Form } from "antd";
+import {
+  Row,
+  Col,
+  Button,
+  Input,
+  Table,
+  Space,
+  Popconfirm as Pop,
+  Spin
+} from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import AppLayout from "../../../component/Layout/layout";
 import { formatDistanceToNow } from "date-fns";
 import ModalForm from "../../../component/students/modalForm";
 import apiService from "../../../services/api-service";
+import { debounce } from "lodash";
 
 const { Search } = Input;
 
@@ -13,7 +23,7 @@ export default function Student() {
     {
       title: "No",
       key: "no",
-      render: (arg1, arg2, index) => index + 1,
+      render: (arg1, arg2, index) => index + 1
     },
     {
       key: "name",
@@ -26,7 +36,7 @@ export default function Student() {
           return 1;
         }
       },
-      render: (text) => <a>{text}</a>,
+      render: text => <a>{text}</a>
     },
     {
       key: "area",
@@ -36,41 +46,41 @@ export default function Student() {
       filters: [
         {
           text: "China",
-          value: "China",
+          value: "China"
         },
         {
           text: "New Zealand ",
-          value: "New Zealand",
+          value: "New Zealand"
         },
         {
           text: "Canada",
-          value: "Canada",
+          value: "Canada"
         },
         {
           text: "Australia",
-          value: "Australia",
-        },
+          value: "Australia"
+        }
       ],
-      onFilter: (value, record) => record.country.indexOf(value) === 0,
+      onFilter: (value, record) => record.country.indexOf(value) === 0
     },
     {
       key: "email",
       title: "Email",
-      dataIndex: "email",
+      dataIndex: "email"
     },
     {
       key: "curriculum",
       title: "Selected Curriculum",
       dataIndex: "courses",
       width: "25%",
-      render: (courses) =>
+      render: courses =>
         courses.map((course, index) => {
           if (index < courses.length - 1) {
             return `${course.name},`;
           } else {
             return `${course.name}`;
           }
-        }),
+        })
     },
     {
       key: "type",
@@ -79,22 +89,21 @@ export default function Student() {
       filters: [
         {
           text: "developer",
-          value: "developer",
+          value: "developer"
         },
         {
           text: "tester",
-          value: "tester",
-        },
+          value: "tester"
+        }
       ],
       onFilter: (value, record) => record.type.name.indexOf(value) === 0,
-      render: (type) => (type ? type["name"] : ""),
+      render: type => (type ? type["name"] : "")
     },
     {
       key: "join",
       title: "Join Time",
       dataIndex: "createdAt",
-      render: (value) =>
-        formatDistanceToNow(new Date(value), { addSuffix: true }),
+      render: value => formatDistanceToNow(new Date(value), { addSuffix: true })
     },
     {
       title: "Action",
@@ -109,20 +118,29 @@ export default function Student() {
             >
               Edit
             </a>
-            <a>Delete</a>
+            <Pop
+              title="Are you sure to delete?"
+              okText="Confirm"
+              onConfirm={() => {
+                deleteStudent(record);
+              }}
+            >
+              <a>Delete</a>
+            </Pop>
           </Space>
         );
-      },
-    },
+      }
+    }
   ];
-  const [studentData, setStudentData] = useState([]);
+  const [studentData, setStudentData] = useState({});
   const [page, setPage] = useState({ currentPage: 1, pageSize: 20 });
   const [visibility, setVisibility] = useState(false);
   const [formValues, setFormValues] = useState({});
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     apiService
-      .get(`students?page=${page.currentPage}&limit=${page.pageSize}`)
-      .then((res) => {
+      .getStudent({ page: `${page.currentPage}`, limit: `${page.pageSize}` })
+      .then(res => {
         setStudentData(res.data);
       });
   }, [page]);
@@ -138,24 +156,63 @@ export default function Student() {
         name: "",
         country: "",
         email: "",
-        type: "",
-      },
+        type: ""
+      }
     });
   };
-  const editStudent = (record) => {
+  const editStudent = record => {
     setVisibility(true);
     setFormValues({
       type: "Edit",
-      student: {
-        name: record.name,
-        email: record.email,
-        country: record.country,
-        type: "",
-      },
+      student: record
     });
   };
-  const canel = () => {
+  const deleteStudent = record => {
+    apiService
+      .deleteStudent(`students/${record.id}`)
+      .then(() => {
+        setStudentData({
+          ...studentData,
+          students: studentData.students.filter(
+            student => student.id != record.id
+          )
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+  const cancel = () => {
     setVisibility(false);
+  };
+  const updateRecord = record => {
+    setStudentData({
+      ...studentData,
+      students: studentData.students.map(student => {
+        if (student.id == record.id) {
+          return record;
+        } else {
+          return student;
+        }
+      })
+    });
+  };
+  const searchStudent = e => {
+    let name = e.target.value;
+    setLoading(true);
+    apiService
+      .getStudent(
+        name
+          ? { limit: "20", page: "1", query: `${name}` }
+          : { limit: "20", page: "1" }
+      )
+      .then(res => {
+        setLoading(false);
+        setStudentData(res.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
   return (
     <AppLayout>
@@ -167,25 +224,31 @@ export default function Student() {
             </Button>
             <ModalForm
               visible={visibility}
-              cancel={canel}
+              cancel={cancel}
               formValues={formValues}
+              update={updateRecord}
             />
           </Col>
           <Col span={6}>
-            <Search placeholder="input search text" />
+            <Search
+              placeholder="Search by name"
+              onChange={debounce(searchStudent, 1000)}
+            />
           </Col>
         </Row>
         <Col span={24}>
-          <Table
-            columns={columns}
-            dataSource={studentData.students}
-            pagination={{
-              pageSize: page.pageSize,
-              showSizeChanger: true,
-              onChange: handlePageChange,
-              total: `${studentData.total}`,
-            }}
-          />
+          <Spin spinning={loading}>
+            <Table
+              columns={columns}
+              dataSource={studentData.students}
+              pagination={{
+                pageSize: page.pageSize,
+                showSizeChanger: true,
+                onChange: handlePageChange,
+                total: `${studentData.total}`
+              }}
+            />
+          </Spin>
         </Col>
       </div>
     </AppLayout>
