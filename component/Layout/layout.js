@@ -1,4 +1,13 @@
-import { Layout, Menu, Breadcrumb, Button, Row, Col } from "antd";
+import {
+  Layout,
+  Menu,
+  Breadcrumb,
+  Badge,
+  Row,
+  Dropdown,
+  Avatar,
+  Col
+} from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -13,6 +22,7 @@ import {
   ProjectOutlined,
   FileAddOutlined,
   EditOutlined,
+  LogoutOutlined
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
@@ -25,6 +35,7 @@ const { SubMenu } = Menu;
 export default function AppLayout(props) {
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
+
   const onCollapsed = () => {
     setCollapsed(!collapsed);
   };
@@ -34,6 +45,13 @@ export default function AppLayout(props) {
       router.push("/");
     });
   };
+  const menu = (
+    <Menu onClick={logout}>
+      <Menu.Item key="1" icon={<LogoutOutlined />}>
+        Logout
+      </Menu.Item>
+    </Menu>
+  );
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapsed}>
@@ -41,23 +59,37 @@ export default function AppLayout(props) {
           <h3>CMS</h3>
         </div>
         <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-          <Menu.Item icon={<DashboardOutlined />}>
+          <Menu.Item key="1" icon={<DashboardOutlined />}>
             <Link href="/dashboard">Overview</Link>
           </Menu.Item>
-          <SubMenu icon={<SolutionOutlined />} title="Student">
-            <Menu.Item icon={<TeamOutlined />}>
+          <SubMenu key="student" icon={<SolutionOutlined />} title="Student">
+            <Menu.Item key="student1" icon={<TeamOutlined />}>
               <Link href="/dashboard/students">Student List</Link>
             </Menu.Item>
           </SubMenu>
-          <SubMenu icon={<DeploymentUnitOutlined />} title="Teacher">
-            <Menu.Item icon={<TeamOutlined />}>Teacher List</Menu.Item>
+          <SubMenu
+            key="teacher"
+            icon={<DeploymentUnitOutlined />}
+            title="Teacher"
+          >
+            <Menu.Item key="teacher1" icon={<TeamOutlined />}>
+              Teacher List
+            </Menu.Item>
           </SubMenu>
-          <SubMenu icon={<ReadOutlined />} title="Course">
-            <Menu.Item icon={<ProjectOutlined />}>All Courses</Menu.Item>
-            <Menu.Item icon={<FileAddOutlined />}>Add Course</Menu.Item>
-            <Menu.Item icon={<EditOutlined />}>Edit Course</Menu.Item>
+          <SubMenu key="course" icon={<ReadOutlined />} title="Course">
+            <Menu.Item key="course1" icon={<ProjectOutlined />}>
+              All Courses
+            </Menu.Item>
+            <Menu.Item key="course2" icon={<FileAddOutlined />}>
+              Add Course
+            </Menu.Item>
+            <Menu.Item key="course3" icon={<EditOutlined />}>
+              Edit Course
+            </Menu.Item>
           </SubMenu>
-          <Menu.Item icon={<MessageOutlined />}>Message</Menu.Item>
+          <Menu.Item key="2" icon={<MessageOutlined />}>
+            Message
+          </Menu.Item>
         </Menu>
       </Sider>
       <Layout>
@@ -66,15 +98,17 @@ export default function AppLayout(props) {
             {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </a>
 
-          <Row align="middle">
-            <BellOutlined style={{ color: "white" }}></BellOutlined>
-
-            <Button
-              icon={<UserOutlined style={{ color: "white" }} />}
-              shape="circle"
-              style={{ background: "grey", marginLeft: "20px" }}
-              onClick={logout}
-            ></Button>
+          <Row align="middle" justify="space-around">
+            <Col span={12} offset={-2}>
+              <Badge count={33}>
+                <BellOutlined style={{ fontSize: 26, color: "white" }} />
+              </Badge>
+            </Col>
+            <Col span={12}>
+              <Dropdown overlay={menu}>
+                <Avatar icon={<UserOutlined />} />
+              </Dropdown>
+            </Col>
           </Row>
         </Header>
         <Content>

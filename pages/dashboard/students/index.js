@@ -9,12 +9,12 @@ import {
   Spin
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import AppLayout from "../../../component/Layout/layout";
 import { formatDistanceToNow } from "date-fns";
 import ModalForm from "../../../component/students/modalForm";
 import apiService from "../../../services/api-service";
-import { debounce } from "lodash";
+import { debounce, throttle } from "lodash";
 
 const { Search } = Input;
 
@@ -138,6 +138,9 @@ export default function Student() {
   const [formValues, setFormValues] = useState({});
   const [loading, setLoading] = useState(false);
   useEffect(() => {
+    console.log("executed");
+  }, []);
+  useEffect(() => {
     apiService
       .getStudent({ page: `${page.currentPage}`, limit: `${page.pageSize}` })
       .then(res => {
@@ -197,23 +200,26 @@ export default function Student() {
       })
     });
   };
-  const searchStudent = e => {
-    let name = e.target.value;
-    setLoading(true);
-    apiService
-      .getStudent(
-        name
-          ? { limit: "20", page: "1", query: `${name}` }
-          : { limit: "20", page: "1" }
-      )
-      .then(res => {
-        setLoading(false);
-        setStudentData(res.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
+  const searchStudent = useCallback(
+    throttle(e => {
+      let name = e.target.value;
+      setLoading(true);
+      apiService
+        .getStudent(
+          name
+            ? { limit: "20", page: "1", query: `${name}` }
+            : { limit: "20", page: "1" }
+        )
+        .then(res => {
+          setLoading(false);
+          setStudentData(res.data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }, 3000),
+    []
+  );
   return (
     <AppLayout>
       <div className="student-list-wrapper">
@@ -230,10 +236,7 @@ export default function Student() {
             />
           </Col>
           <Col span={6}>
-            <Search
-              placeholder="Search by name"
-              onChange={debounce(searchStudent, 1000)}
-            />
+            <Search placeholder="Search by name" onChange={searchStudent} />
           </Col>
         </Row>
         <Col span={24}>
