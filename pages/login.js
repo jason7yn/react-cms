@@ -10,16 +10,19 @@ const titleStyle = {
 
 export default function Login() {
   const router = useRouter();
-  const onFinish = (values) => {
-    apiService
-      .login(values)
-      .then((res) => {
-        localStorage.setItem("user", JSON.stringify(res.data));
-        router.push("/dashboard");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const onFinish = async (values) => {
+    // apiService
+    //   .login(values)
+    //   .then((res) => {
+    //     console.log(res);
+    //     localStorage.setItem("user", JSON.stringify(res.data));
+    //     router.push("/dashboard");
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+    const res = await apiService.login(values);
+    console.log(res);
   };
 
   return (
