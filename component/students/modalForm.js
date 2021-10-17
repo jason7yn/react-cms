@@ -20,7 +20,7 @@ export default function ModalForm(props) {
       if (formValues.type == "Add") {
         apiService
           .addStudent({ ...values, type: values.type == "tester" ? 1 : 2 })
-          .then(() => {
+          .then(res => {
             cancel();
             message.success("success");
           })
@@ -32,7 +32,7 @@ export default function ModalForm(props) {
             type: values.type == "tester" ? 1 : 2,
             id: student.id
           })
-          .then(() => {
+          .then(res => {
             cancel();
             update({
               ...student,

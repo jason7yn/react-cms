@@ -137,9 +137,7 @@ export default function Student() {
   const [visibility, setVisibility] = useState(false);
   const [formValues, setFormValues] = useState({});
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    console.log("executed");
-  }, []);
+
   useEffect(() => {
     apiService
       .getStudent({ page: `${page.currentPage}`, limit: `${page.pageSize}` })
