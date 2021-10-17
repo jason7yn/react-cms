@@ -6,7 +6,7 @@ import {
   Row,
   Dropdown,
   Avatar,
-  Col
+  Col,
 } from "antd";
 import {
   MenuUnfoldOutlined,
@@ -22,12 +22,13 @@ import {
   ProjectOutlined,
   FileAddOutlined,
   EditOutlined,
-  LogoutOutlined
+  LogoutOutlined,
 } from "@ant-design/icons";
-import { useRouter } from "next/router";
+import { Router, useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import apiService from "../../services/api-service";
 import Link from "next/link";
+import BreadcrumbItem from "antd/lib/breadcrumb/BreadcrumbItem";
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -45,13 +46,26 @@ export default function AppLayout(props) {
       router.push("/");
     });
   };
-  const menu = (
-    <Menu onClick={logout}>
-      <Menu.Item key="1" icon={<LogoutOutlined />}>
-        Logout
-      </Menu.Item>
-    </Menu>
-  );
+  //dashboard-->CMS MANAGER(ROLE) SYSTEM/Overview
+  //students -->CMS MANAGER SYSTEM / STUDENT / STUDENTLIST
+
+  const generateBread = () => {
+    let pathName = router.pathname;
+    const paths = pathName.split("/").filter((i) => i);
+    const breadcrumbItem = [];
+    paths.map((path) => {
+      if (path == "dashboard") {
+        breadcrumbItem.push(
+          <BreadcrumbItem>CMS MANAGER SYSTEM</BreadcrumbItem>
+        );
+        breadcrumbItem.push(<BreadcrumbItem>Overview</BreadcrumbItem>);
+      } else if (path == "students") {
+        breadcrumbItem.push(<BreadcrumbItem>Student</BreadcrumbItem>);
+        breadcrumbItem.push(<BreadcrumbItem>Student List</BreadcrumbItem>);
+      }
+    });
+    return breadcrumbItem;
+  };
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapsed}>
@@ -105,17 +119,22 @@ export default function AppLayout(props) {
               </Badge>
             </Col>
             <Col span={12}>
-              <Dropdown overlay={menu}>
+              <Dropdown
+                overlay={
+                  <Menu onClick={logout}>
+                    <Menu.Item key="1" icon={<LogoutOutlined />}>
+                      Logout
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
                 <Avatar icon={<UserOutlined />} />
               </Dropdown>
             </Col>
           </Row>
         </Header>
         <Content>
-          <Breadcrumb>
-            <Breadcrumb.Item>CMS Manager System</Breadcrumb.Item>
-            <Breadcrumb.Item>Overview</Breadcrumb.Item>
-          </Breadcrumb>
+          <Breadcrumb>{generateBread()}</Breadcrumb>
           {props.children}
         </Content>
       </Layout>

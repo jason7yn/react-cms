@@ -15,10 +15,12 @@ import { formatDistanceToNow } from "date-fns";
 import ModalForm from "../../../component/students/modalForm";
 import apiService from "../../../services/api-service";
 import { throttle } from "lodash";
-
+import { useRouter } from "next/router";
 const { Search } = Input;
 
 export default function Student() {
+  const router = useRouter();
+  console.log(router.pathname);
   const columns = [
     {
       title: "No",
