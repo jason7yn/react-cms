@@ -3,10 +3,10 @@ import AES from "crypto-js/aes";
 import { message } from "antd";
 
 const httpService = axios.create({
-  baseURL: "https://cms.chtoma.com/api/"
+  baseURL: "https://cms.chtoma.com/api/",
 });
 
-httpService.interceptors.request.use(function(config) {
+httpService.interceptors.request.use(function (config) {
   if (localStorage.getItem("user")) {
     let token = JSON.parse(localStorage.getItem("user")).token;
     config.headers["Authorization"] = `Bearer ${token}`;
@@ -16,22 +16,18 @@ httpService.interceptors.request.use(function(config) {
 /*
   action: process http request
     1. launch api request(methods: get,post,delete....)
+      1.1 fullfilled promise -> return res.data
+      1.2 rejected promise -> return {code,msg}  
     2. handle response
-      2.1 success response -> return response data
-      2.2 unsuccess response -> return error code
+      2.1 code == 200 -> return response 
+      2.2 code !==200 -> alert error message - > return response
 */
 
-//if error callback is specified in then block, catch block will be not executed
-//if response is a reject promise object and both error callback in then block
-//and error callback in error block only return a error message instead of
-//explicitly return a reject promise object
-//the return value will be a resolved promise object with error message
-function reqHandler(apiRequest, url, payload) {
-  return apiRequest(url, payload).then(
-    res => res.data,
-    error => handleError(error)
-  );
-  // .catch(error => handleError(error)); //error message
+function reqHandler(apiRequest, url, payload, showMessage) {
+  return apiRequest(url, payload)
+    .then((res) => res.data)
+    .catch((error) => handleError(error))
+    .then((res) => resHandler(res, showMessage));
 }
 function handleError(error) {
   const msg = error.response.data.msg;
@@ -39,11 +35,20 @@ function handleError(error) {
 
   return { code, msg };
 }
-function resHandler(res) {
-  const { code, msg } = res;
 
-  if (!(code.toString().startsWith("2") || code.toString().startsWith("3"))) {
+function resHandler(res, showMessage = false) {
+  //fullfilled promise object, value:{code,msg,data:{}}
+  //rejected promise object, value:{code,msg}
+  const { code, msg } = res;
+  let isError = !(
+    code.toString().startsWith("2") || code.toString().startsWith("3")
+  );
+  if (isError) {
     message.error(msg);
+    return res;
+  }
+  if (!isError && showMessage) {
+    message.success(msg);
   }
   return res;
 }
@@ -52,7 +57,7 @@ const apiService = {
   login(param) {
     return reqHandler(httpService.post, "login", {
       ...param,
-      password: AES.encrypt(param.password, "cms").toString()
+      password: AES.encrypt(param.password, "cms").toString(),
     });
   },
   logout() {
@@ -60,18 +65,18 @@ const apiService = {
   },
 
   addStudent(param) {
-    return reqHandler(httpService.post, "students", param);
+    return reqHandler(httpService.post, "students", param, true);
   },
 
   updateStudent(param) {
-    return reqHandler(httpService.put, "students", param).then(resHandler);
+    return reqHandler(httpService.put, "students", param, true);
   },
 
   deleteStudent(url) {
-    return reqHandler(httpService.delete, url);
+    return reqHandler(httpService.delete, url, undefined, true);
   },
   getStudent(param) {
     return reqHandler(httpService.get, "students", { params: param });
-  }
+  },
 };
 export default apiService;

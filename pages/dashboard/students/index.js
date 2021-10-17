@@ -6,7 +6,7 @@ import {
   Table,
   Space,
   Popconfirm as Pop,
-  Spin
+  Spin,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useState, useEffect, useCallback } from "react";
@@ -14,7 +14,7 @@ import AppLayout from "../../../component/Layout/layout";
 import { formatDistanceToNow } from "date-fns";
 import ModalForm from "../../../component/students/modalForm";
 import apiService from "../../../services/api-service";
-import { debounce, throttle } from "lodash";
+import { throttle } from "lodash";
 
 const { Search } = Input;
 
@@ -23,7 +23,7 @@ export default function Student() {
     {
       title: "No",
       key: "no",
-      render: (arg1, arg2, index) => index + 1
+      render: (arg1, arg2, index) => index + 1,
     },
     {
       key: "name",
@@ -36,7 +36,7 @@ export default function Student() {
           return 1;
         }
       },
-      render: text => <a>{text}</a>
+      render: (text) => <a>{text}</a>,
     },
     {
       key: "area",
@@ -46,41 +46,41 @@ export default function Student() {
       filters: [
         {
           text: "China",
-          value: "China"
+          value: "China",
         },
         {
           text: "New Zealand ",
-          value: "New Zealand"
+          value: "New Zealand",
         },
         {
           text: "Canada",
-          value: "Canada"
+          value: "Canada",
         },
         {
           text: "Australia",
-          value: "Australia"
-        }
+          value: "Australia",
+        },
       ],
-      onFilter: (value, record) => record.country.indexOf(value) === 0
+      onFilter: (value, record) => record.country.indexOf(value) === 0,
     },
     {
       key: "email",
       title: "Email",
-      dataIndex: "email"
+      dataIndex: "email",
     },
     {
       key: "curriculum",
       title: "Selected Curriculum",
       dataIndex: "courses",
       width: "25%",
-      render: courses =>
+      render: (courses) =>
         courses.map((course, index) => {
           if (index < courses.length - 1) {
             return `${course.name},`;
           } else {
             return `${course.name}`;
           }
-        })
+        }),
     },
     {
       key: "type",
@@ -89,21 +89,22 @@ export default function Student() {
       filters: [
         {
           text: "developer",
-          value: "developer"
+          value: "developer",
         },
         {
           text: "tester",
-          value: "tester"
-        }
+          value: "tester",
+        },
       ],
       onFilter: (value, record) => record.type.name.indexOf(value) === 0,
-      render: type => (type ? type["name"] : "")
+      render: (type) => (type ? type["name"] : ""),
     },
     {
       key: "join",
       title: "Join Time",
       dataIndex: "createdAt",
-      render: value => formatDistanceToNow(new Date(value), { addSuffix: true })
+      render: (value) =>
+        formatDistanceToNow(new Date(value), { addSuffix: true }),
     },
     {
       title: "Action",
@@ -113,7 +114,11 @@ export default function Student() {
           <Space size="middle">
             <a
               onClick={() => {
-                editStudent(record);
+                setVisibility(true);
+                setFormValues({
+                  type: "Edit",
+                  student: record,
+                });
               }}
             >
               Edit
@@ -122,15 +127,22 @@ export default function Student() {
               title="Are you sure to delete?"
               okText="Confirm"
               onConfirm={() => {
-                deleteStudent(record);
+                apiService.deleteStudent(`students/${record.id}`).then(() => {
+                  setStudentData({
+                    ...studentData,
+                    students: studentData.students.filter(
+                      (student) => student.id != record.id
+                    ),
+                  });
+                });
               }}
             >
               <a>Delete</a>
             </Pop>
           </Space>
         );
-      }
-    }
+      },
+    },
   ];
   const [studentData, setStudentData] = useState({});
   const [page, setPage] = useState({ currentPage: 1, pageSize: 20 });
@@ -141,65 +153,13 @@ export default function Student() {
   useEffect(() => {
     apiService
       .getStudent({ page: `${page.currentPage}`, limit: `${page.pageSize}` })
-      .then(res => {
+      .then((res) => {
         setStudentData(res.data);
       });
   }, [page]);
 
-  const handlePageChange = (current, pageSize) => {
-    setPage({ currentPage: current, pageSize: pageSize });
-  };
-  const addStudent = () => {
-    setVisibility(true);
-    setFormValues({
-      type: "Add",
-      student: {
-        name: "",
-        country: "",
-        email: "",
-        type: ""
-      }
-    });
-  };
-  const editStudent = record => {
-    setVisibility(true);
-    setFormValues({
-      type: "Edit",
-      student: record
-    });
-  };
-  const deleteStudent = record => {
-    apiService
-      .deleteStudent(`students/${record.id}`)
-      .then(() => {
-        setStudentData({
-          ...studentData,
-          students: studentData.students.filter(
-            student => student.id != record.id
-          )
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
-  const cancel = () => {
-    setVisibility(false);
-  };
-  const updateRecord = record => {
-    setStudentData({
-      ...studentData,
-      students: studentData.students.map(student => {
-        if (student.id == record.id) {
-          return record;
-        } else {
-          return student;
-        }
-      })
-    });
-  };
   const searchStudent = useCallback(
-    throttle(e => {
+    throttle((e) => {
       let name = e.target.value;
       setLoading(true);
       apiService
@@ -208,12 +168,9 @@ export default function Student() {
             ? { limit: "20", page: "1", query: `${name}` }
             : { limit: "20", page: "1" }
         )
-        .then(res => {
+        .then((res) => {
           setLoading(false);
           setStudentData(res.data);
-        })
-        .catch(error => {
-          console.log(error);
         });
     }, 3000),
     []
@@ -223,14 +180,42 @@ export default function Student() {
       <div className="student-list-wrapper">
         <Row justify="space-between" className="student-list-header">
           <Col span={8}>
-            <Button type="primary" icon={<PlusOutlined />} onClick={addStudent}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setVisibility(true);
+                setFormValues({
+                  type: "Add",
+                  student: {
+                    name: "",
+                    country: "",
+                    email: "",
+                    type: "",
+                  },
+                });
+              }}
+            >
               Add
             </Button>
             <ModalForm
               visible={visibility}
-              cancel={cancel}
+              cancel={() => {
+                setVisibility(false);
+              }}
               formValues={formValues}
-              update={updateRecord}
+              update={(record) => {
+                setStudentData({
+                  ...studentData,
+                  students: studentData.students.map((student) => {
+                    if (student.id == record.id) {
+                      return record;
+                    } else {
+                      return student;
+                    }
+                  }),
+                });
+              }}
             />
           </Col>
           <Col span={6}>
@@ -245,8 +230,10 @@ export default function Student() {
               pagination={{
                 pageSize: page.pageSize,
                 showSizeChanger: true,
-                onChange: handlePageChange,
-                total: `${studentData.total}`
+                onChange: (current, pageSize) => {
+                  setPage({ currentPage: current, pageSize: pageSize });
+                },
+                total: `${studentData.total}`,
               }}
             />
           </Spin>

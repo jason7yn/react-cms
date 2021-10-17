@@ -11,37 +11,33 @@ export default function ModalForm(props) {
       name: type == "Edit" ? student.name : "",
       email: type == "Edit" ? student.email : "",
       country: type == "Edit" ? student.country : "",
-      type: ""
+      type: "",
     });
   });
   const handleFormSubmit = () => {
     //tester = 1 developer = 2
-    form.validateFields().then(values => {
+    form.validateFields().then((values) => {
       if (formValues.type == "Add") {
         apiService
           .addStudent({ ...values, type: values.type == "tester" ? 1 : 2 })
-          .then(res => {
+          .then((res) => {
             cancel();
-            message.success("success");
-          })
-          .catch(error => console.log(error));
+          });
       } else {
         apiService
           .updateStudent({
             ...values,
             type: values.type == "tester" ? 1 : 2,
-            id: student.id
+            id: student.id,
           })
-          .then(res => {
+          .then((res) => {
             cancel();
             update({
               ...student,
               ...values,
-              type: { id: values.type == "tester" ? 1 : 2, name: values.type }
+              type: { id: values.type == "tester" ? 1 : 2, name: values.type },
             });
-            message.success("success");
-          })
-          .catch(error => console.log(error));
+          });
       }
     });
   };
@@ -62,7 +58,7 @@ export default function ModalForm(props) {
         </Button>,
         <Button key="cancel" type="default" onClick={cancel}>
           Cancel
-        </Button>
+        </Button>,
       ]}
     >
       <Form labelCol={{ span: 6 }} form={form}>
@@ -74,7 +70,7 @@ export default function ModalForm(props) {
           name="email"
           rules={[
             { required: true },
-            { type: "email", message: `'email' is not valid email` }
+            { type: "email", message: `'email' is not valid email` },
           ]}
         >
           <Input placeholder="email" />
