@@ -1,13 +1,4 @@
-import {
-  Layout,
-  Menu,
-  Breadcrumb,
-  Badge,
-  Row,
-  Dropdown,
-  Avatar,
-  Col,
-} from "antd";
+import { Layout, Menu, Badge, Row, Dropdown, Avatar, Col } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -22,19 +13,23 @@ import {
   ProjectOutlined,
   FileAddOutlined,
   EditOutlined,
-  LogoutOutlined,
+  LogoutOutlined
 } from "@ant-design/icons";
-import { Router, useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import apiService from "../../services/api-service";
 import Link from "next/link";
-import BreadcrumbItem from "antd/lib/breadcrumb/BreadcrumbItem";
+//import { keyPathContext } from "../../services/context";
+import AppBreadCrumb from "../Layout/breadcrumb";
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
 export default function AppLayout(props) {
   const [collapsed, setCollapsed] = useState(false);
+  const [keyPath, setKeyPath] = useState(["Overview"]);
+  console.log("current keyPath state: ", keyPath);
+
   const router = useRouter();
 
   const onCollapsed = () => {
@@ -46,62 +41,51 @@ export default function AppLayout(props) {
       router.push("/");
     });
   };
-  //dashboard-->CMS MANAGER(ROLE) SYSTEM/Overview
-  //students -->CMS MANAGER SYSTEM / STUDENT / STUDENTLIST
 
-  const generateBread = () => {
-    let pathName = router.pathname;
-    const paths = pathName.split("/").filter((i) => i);
-    const breadcrumbItem = [];
-    paths.map((path) => {
-      if (path == "dashboard") {
-        breadcrumbItem.push(
-          <BreadcrumbItem>CMS MANAGER SYSTEM</BreadcrumbItem>
-        );
-        breadcrumbItem.push(<BreadcrumbItem>Overview</BreadcrumbItem>);
-      } else if (path == "students") {
-        breadcrumbItem.push(<BreadcrumbItem>Student</BreadcrumbItem>);
-        breadcrumbItem.push(<BreadcrumbItem>Student List</BreadcrumbItem>);
-      }
-    });
-    return breadcrumbItem;
-  };
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapsed}>
         <div className="logo">
           <h3>CMS</h3>
         </div>
-        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-          <Menu.Item key="1" icon={<DashboardOutlined />}>
+
+        <Menu
+          theme="dark"
+          mode="inline"
+          selectedKeys={keyPath}
+          onSelect={status => {
+            setKeyPath(status.keyPath);
+          }}
+        >
+          <Menu.Item key="Overview" icon={<DashboardOutlined />}>
             <Link href="/dashboard">Overview</Link>
           </Menu.Item>
-          <SubMenu key="student" icon={<SolutionOutlined />} title="Student">
-            <Menu.Item key="student1" icon={<TeamOutlined />}>
+          <SubMenu key="Student" icon={<SolutionOutlined />} title="Student">
+            <Menu.Item key="Student List" icon={<TeamOutlined />}>
               <Link href="/dashboard/students">Student List</Link>
             </Menu.Item>
           </SubMenu>
           <SubMenu
-            key="teacher"
+            key="Teacher"
             icon={<DeploymentUnitOutlined />}
             title="Teacher"
           >
-            <Menu.Item key="teacher1" icon={<TeamOutlined />}>
+            <Menu.Item key="Teacher List" icon={<TeamOutlined />}>
               Teacher List
             </Menu.Item>
           </SubMenu>
-          <SubMenu key="course" icon={<ReadOutlined />} title="Course">
-            <Menu.Item key="course1" icon={<ProjectOutlined />}>
+          <SubMenu key="Course" icon={<ReadOutlined />} title="Course">
+            <Menu.Item key="All Courses" icon={<ProjectOutlined />}>
               All Courses
             </Menu.Item>
-            <Menu.Item key="course2" icon={<FileAddOutlined />}>
+            <Menu.Item key="Add Course" icon={<FileAddOutlined />}>
               Add Course
             </Menu.Item>
-            <Menu.Item key="course3" icon={<EditOutlined />}>
+            <Menu.Item key="Edit Course" icon={<EditOutlined />}>
               Edit Course
             </Menu.Item>
           </SubMenu>
-          <Menu.Item key="2" icon={<MessageOutlined />}>
+          <Menu.Item key="Message" icon={<MessageOutlined />}>
             Message
           </Menu.Item>
         </Menu>
@@ -134,8 +118,16 @@ export default function AppLayout(props) {
           </Row>
         </Header>
         <Content>
-          <Breadcrumb>{generateBread()}</Breadcrumb>
-          {props.children}
+          <AppBreadCrumb keyPath={keyPath} />
+          <div
+            style={{
+              backgroundColor: "#fff",
+              margin: "16px",
+              padding: "16px"
+            }}
+          >
+            {props.children}
+          </div>
         </Content>
       </Layout>
     </Layout>

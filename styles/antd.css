@@ -30,9 +30,13 @@
 }
 .student-list-wrapper {
   background: white;
-  margin: 16px;
-  padding: 16px;
 }
 .student-list-header {
   margin-bottom: 16px;
+}
+.breadcrumb {
+  padding: 16px;
+  margin: 0 16px;
+  font-size: 14px;
+  line-height: 1.5;
 }
