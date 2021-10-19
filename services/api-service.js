@@ -3,10 +3,10 @@ import AES from "crypto-js/aes";
 import { message } from "antd";
 
 const httpService = axios.create({
-  baseURL: "https://cms.chtoma.com/api/",
+  baseURL: "https://cms.chtoma.com/api/"
 });
 
-httpService.interceptors.request.use(function (config) {
+httpService.interceptors.request.use(function(config) {
   if (localStorage.getItem("user")) {
     let token = JSON.parse(localStorage.getItem("user")).token;
     config.headers["Authorization"] = `Bearer ${token}`;
@@ -25,9 +25,9 @@ httpService.interceptors.request.use(function (config) {
 
 function reqHandler(apiRequest, url, payload, showMessage) {
   return apiRequest(url, payload)
-    .then((res) => res.data)
-    .catch((error) => handleError(error))
-    .then((res) => resHandler(res, showMessage));
+    .then(res => res.data)
+    .catch(error => handleError(error))
+    .then(res => resHandler(res, showMessage));
 }
 function handleError(error) {
   const msg = error.response.data.msg;
@@ -57,7 +57,7 @@ const apiService = {
   login(param) {
     return reqHandler(httpService.post, "login", {
       ...param,
-      password: AES.encrypt(param.password, "cms").toString(),
+      password: AES.encrypt(param.password, "cms").toString()
     });
   },
   logout() {
@@ -78,5 +78,8 @@ const apiService = {
   getStudent(param) {
     return reqHandler(httpService.get, "students", { params: param });
   },
+  getStudentById(id) {
+    return reqHandler(httpService.get, `students/${id}`);
+  }
 };
 export default apiService;
