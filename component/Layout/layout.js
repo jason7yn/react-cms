@@ -16,21 +16,22 @@ import {
   LogoutOutlined
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import apiService from "../../services/api-service";
 import Link from "next/link";
 //import { keyPathContext } from "../../services/context";
 import AppBreadCrumb from "../Layout/breadcrumb";
+import { getBreadcrumbPath, getMenuPath } from "../../services/pathnameMap";
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
 export default function AppLayout(props) {
   const [collapsed, setCollapsed] = useState(false);
-  const [keyPath, setKeyPath] = useState(["Overview"]);
-  console.log("current keyPath state: ", keyPath);
-
+  const [currentPath, setCurrentPath] = useState(["Overview"]);
+  //const { setKeyPath } = useContext(keyPathContext);
   const router = useRouter();
+  console.log("called from app layout", router.pathname);
 
   const onCollapsed = () => {
     setCollapsed(!collapsed);
@@ -52,9 +53,9 @@ export default function AppLayout(props) {
         <Menu
           theme="dark"
           mode="inline"
-          selectedKeys={keyPath}
+          selectedKeys={getMenuPath(router)}
           onSelect={status => {
-            setKeyPath(status.keyPath);
+            setCurrentPath(status.keyPath);
           }}
         >
           <Menu.Item key="Overview" icon={<DashboardOutlined />}>
@@ -118,7 +119,7 @@ export default function AppLayout(props) {
           </Row>
         </Header>
         <Content>
-          <AppBreadCrumb keyPath={keyPath} />
+          <AppBreadCrumb keyPath={getBreadcrumbPath(router)} />
           <div
             style={{
               backgroundColor: "#fff",

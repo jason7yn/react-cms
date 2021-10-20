@@ -9,18 +9,15 @@ import {
   Spin
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { useState, useEffect, useCallback } from "react";
-import AppLayout from "../../../component/Layout/layout";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { formatDistanceToNow } from "date-fns";
 import ModalForm from "../../../component/students/modalForm";
 import apiService from "../../../services/api-service";
 import { throttle } from "lodash";
 import { useRouter } from "next/router";
-const { Search } = Input;
 import Link from "next/link";
-
+const { Search } = Input;
 export default function Student() {
-  const router = useRouter();
   const columns = [
     {
       title: "No",
