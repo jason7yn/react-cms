@@ -13,7 +13,7 @@ export default function Details() {
   const router = useRouter();
   const [studentDetail, setStudentDetail] = useState({});
   useEffect(() => {
-    apiService.getStudentById(router.query.id).then(res => {
+    apiService.getStudentById(router.query.id).then((res) => {
       setStudentDetail(res.data);
     });
   }, []);
@@ -22,18 +22,18 @@ export default function Details() {
   const tabList = [
     {
       key: "about",
-      tab: "About"
+      tab: "About",
     },
     {
       key: "course",
-      tab: "Courses"
-    }
+      tab: "Courses",
+    },
   ];
   const columns = [
     {
       title: "No",
       key: "no",
-      render: (arg1, arg2, index) => index + 1
+      render: (arg1, arg2, index) => index + 1,
     },
     {
       key: "name",
@@ -42,13 +42,13 @@ export default function Details() {
 
       render: (text, record) => (
         <Link href={`/dashboard/courses/${record.id}`}>{text}</Link>
-      )
+      ),
     },
     {
       title: "Type",
       key: "type",
       dataIndex: "type",
-      render: type => {
+      render: (type) => {
         if (type.length !== 0) {
           return type.map((element, index) => {
             if (index < type.length - 1) {
@@ -60,13 +60,13 @@ export default function Details() {
         } else {
           return "";
         }
-      }
+      },
     },
     {
       title: "Join Time",
       key: "join",
-      dataIndex: "createdAt"
-    }
+      dataIndex: "createdAt",
+    },
   ];
   const tabListContent = {
     about: (
@@ -119,7 +119,11 @@ export default function Details() {
         <Space direction="horizontal">
           {studentDetail.interest
             ? studentDetail.interest.map((element, index) => {
-                return <Tag color={tagColor[index]}>{element}</Tag>;
+                return (
+                  <Tag key={index} color={tagColor[index]}>
+                    {element}
+                  </Tag>
+                );
               })
             : ""}
         </Space>
@@ -127,7 +131,7 @@ export default function Details() {
         {studentDetail.description}
       </Typography>
     ),
-    course: <Table columns={columns} dataSource={studentDetail.courses} />
+    course: <Table columns={columns} dataSource={studentDetail.courses} />,
   };
 
   return (
@@ -172,7 +176,7 @@ export default function Details() {
         <Card
           tabList={tabList}
           activeTabKey={tab.key}
-          onTabChange={key => setTab({ key: key })}
+          onTabChange={(key) => setTab({ key: key })}
         >
           {tabListContent[tab.key]}
         </Card>
