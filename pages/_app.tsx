@@ -1,5 +1,5 @@
 import "../styles/antd.css";
-import AppLayout from "../component/Layout/layout";
+import AppLayout from '../component/Layout/layout';
 
 function MyApp({ Component, pageProps }) {
   switch (Component.name) {

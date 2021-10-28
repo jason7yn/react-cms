@@ -13,25 +13,63 @@ import {
   ProjectOutlined,
   FileAddOutlined,
   EditOutlined,
-  LogoutOutlined
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { useState, useContext } from "react";
 import apiService from "../../services/api-service";
 import Link from "next/link";
-//import { keyPathContext } from "../../services/context";
-import AppBreadCrumb from "../Layout/breadcrumb";
-import { getBreadcrumbPath, getMenuPath } from "../../services/pathnameMap";
-
+import AppBreadCrumb from "./breadcrumb";
+import { routes, sideNav } from "../../services/routes";
+import { useRole } from "../../services/custom-hook";
+import { route } from "next/dist/server/router";
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
+import { isEmpty } from "lodash";
+import path from "path";
 
 export default function AppLayout(props) {
   const [collapsed, setCollapsed] = useState(false);
   const [currentPath, setCurrentPath] = useState(["Overview"]);
-  //const { setKeyPath } = useContext(keyPathContext);
   const router = useRouter();
-  console.log("called from app layout", router.pathname);
+  const role = useRole();
+  const sideNav = routes.get(role);
+  //get current route without query
+  //search route in sideNav, if route == sideNav.path, return sideNav.subNav.label
+  const getActiveRoute = () => {
+    const pathname = router.pathname;
+    const path = pathname.split("/");
+    const query = router.query;
+    if (isEmpty(query)) {
+      return path;
+    } else {
+      path.pop();
+      return path;
+    }
+  };
+  const key = getActiveRoute();
+  console.log(key);
+
+  function renderSideMenu(sideNav: sideNav, parent = ""): JSX.Element {
+    return sideNav.map((item, index) => {
+      if (item.subNav) {
+        return (
+          <SubMenu key={`${item.label}`} icon={item.icon} title={item.label}>
+            {renderSideMenu(item.subNav, item.path.join("/"))}
+          </SubMenu>
+        );
+      } else {
+        return (
+          <Menu.Item key={item.label} icon={item.icon}>
+            <Link href={`/dashboard/${role}/${parent}${item.path}`}>
+              {item.label}
+            </Link>
+          </Menu.Item>
+        );
+      }
+    });
+  }
+  const sideMenu = renderSideMenu(sideNav);
 
   const onCollapsed = () => {
     setCollapsed(!collapsed);
@@ -53,42 +91,12 @@ export default function AppLayout(props) {
         <Menu
           theme="dark"
           mode="inline"
-          selectedKeys={getMenuPath(router)}
-          onSelect={status => {
+          selectedKeys={currentPath} //array
+          onSelect={(status) => {
             setCurrentPath(status.keyPath);
           }}
         >
-          <Menu.Item key="Overview" icon={<DashboardOutlined />}>
-            <Link href="/dashboard">Overview</Link>
-          </Menu.Item>
-          <SubMenu key="Student" icon={<SolutionOutlined />} title="Student">
-            <Menu.Item key="Student List" icon={<TeamOutlined />}>
-              <Link href="/dashboard/students">Student List</Link>
-            </Menu.Item>
-          </SubMenu>
-          <SubMenu
-            key="Teacher"
-            icon={<DeploymentUnitOutlined />}
-            title="Teacher"
-          >
-            <Menu.Item key="Teacher List" icon={<TeamOutlined />}>
-              Teacher List
-            </Menu.Item>
-          </SubMenu>
-          <SubMenu key="Course" icon={<ReadOutlined />} title="Course">
-            <Menu.Item key="All Courses" icon={<ProjectOutlined />}>
-              All Courses
-            </Menu.Item>
-            <Menu.Item key="Add Course" icon={<FileAddOutlined />}>
-              Add Course
-            </Menu.Item>
-            <Menu.Item key="Edit Course" icon={<EditOutlined />}>
-              Edit Course
-            </Menu.Item>
-          </SubMenu>
-          <Menu.Item key="Message" icon={<MessageOutlined />}>
-            Message
-          </Menu.Item>
+          {sideMenu}
         </Menu>
       </Sider>
       <Layout>
@@ -119,12 +127,12 @@ export default function AppLayout(props) {
           </Row>
         </Header>
         <Content>
-          <AppBreadCrumb keyPath={getBreadcrumbPath(router)} />
+          <AppBreadCrumb />
           <div
             style={{
               backgroundColor: "#fff",
               margin: "16px",
-              padding: "16px"
+              padding: "16px",
             }}
           >
             {props.children}

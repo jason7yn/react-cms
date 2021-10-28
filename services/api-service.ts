@@ -22,8 +22,8 @@ httpService.interceptors.request.use(function(config) {
       2.1 code == 200 -> return response 
       2.2 code !==200 -> alert error message - > return response
 */
-
-function reqHandler(apiRequest, url, payload, showMessage) {
+type AxiosRequest = (url:string,payload:{})=>Promise<T>;
+function reqHandler(apiRequest:AxiosRequest, url:string, payload?:any, showMessage?:boolean) {
   return apiRequest(url, payload)
     .then(res => res.data)
     .catch(error => handleError(error))

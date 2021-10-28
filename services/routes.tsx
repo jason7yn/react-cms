@@ -69,7 +69,7 @@ const teachers: SideNav = {
     ]
 }
 const overview: SideNav = {
-    path: [],
+    path: [''],
     label: 'Overview',
     icon: <DashboardOutlined />
 }

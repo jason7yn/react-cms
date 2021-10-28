@@ -1,8 +1,8 @@
-import AppLayout from "../../../component/Layout/layout";
+import AppLayout from "../../../../component/Layout/layout";
 import { Row, Col, Card, Avatar, Typography, Space, Tag, Table } from "antd";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import apiService from "../../../services/api-service";
+import apiService from "../../../../services/api-service";
 const { Title } = Typography;
 import Link from "next/link";
 //output: detail page
