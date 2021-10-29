@@ -1,5 +1,6 @@
 import { SideNav } from "./routes";
 import {isEmpty} from 'lodash'
+import { generateKey } from "crypto";
 
 interface Query {
     id?:string
@@ -8,7 +9,7 @@ interface Query {
 /**
  * genetate keys by extracting all label properties within sidenav
  * @param data SideNav[]  
- * @returns string[][]
+ * @returns string[][] - 2D array contains all label property
  */
 function generateKeys(data: SideNav[], parent = ""): string[][] {
   const keys = data.map((item) => {
@@ -28,7 +29,7 @@ function generateKeys(data: SideNav[], parent = ""): string[][] {
 /**
  * genetate paths by extracting all path properties within sidenav
  * @param data SideNav[]  
- * @returns string[][]
+ * @returns string[][] - 2D array contains all path property
  */
 function generatePaths(data: SideNav[], parent = ""): string[][] {
   const paths = data.map((item) => {
@@ -39,31 +40,38 @@ function generatePaths(data: SideNav[], parent = ""): string[][] {
     if (item.subNav && item.subNav.length) {
       return generatePaths(item.subNav, path).map((item) => item.join("/"));
     } else {
+      //Todo:change here to dynamically obtain user role 
       return [path].map((item) => `/dashboard/manager/${item}`);
     }
   });
   return paths;
 }
+
 /**
- * convert keys and paths from 2D array to 1D 
- * @param keys2D  keys data stored in 2D array
- * @param paths2D paths data stored in 2D array
+ * get keys and paths 
+ * @param data SideNav[]
  * @returns keys and paths in 1D array
  */
-function convert2DArray(keys2D: string[][],paths2D:string[][]) {
-  const keys =keys2D.reduce((prev, next) => prev.concat(next));
-  const paths = paths2D.reduce((prev, next) => prev.concat(next))
+function getKeysAndPaths(data:SideNav[]){
+  //get keys and paths(2D array) and convert it to 1D array(reduce method)
+  const keys = generateKeys(data).reduce((prev,next)=>prev.concat(next))
+  const paths = generatePaths(data).reduce((prev, next) => prev.concat(next))
   return {keys,paths}
 }
 
 function isPathEqual(target:string){
     return function(current:string){
-        console.log('target',target)
-        
         current = current.endsWith('/')?current.slice(0,-1):current
-        console.log('current',current)
         return current===target
     }
+}
+/**
+ * check whether the current url points to a detail page
+ * @param query router.query
+ * @returns true if current page is detail page, else false
+ */
+function isDetailPage(query:Query):boolean{
+  return !isEmpty(query)?true:false
 }
 /**
  * @param data array contains all sidenav item
@@ -72,10 +80,30 @@ function isPathEqual(target:string){
  * @returns current key
  */
 export function getActiveKey(data:SideNav[],pathname:string,query:Query):string{
-    const currentRoute = isEmpty(query)?pathname:pathname.slice(0,pathname.lastIndexOf('/'))
+    const isDetail= isDetailPage(query)
+    const currentRoute = isDetail?pathname.slice(0,pathname.lastIndexOf('/')):pathname;
     const isEqual = isPathEqual(currentRoute)
-    const {keys,paths} = convert2DArray(generateKeys(data),generatePaths(data))
+    const {keys,paths} = getKeysAndPaths(data)
     const index = paths.findIndex(isEqual)
     return keys[index]||''
 
+}
+
+export function configBreadCrumbItems(data:SideNav[],pathname:string,query:Query){
+  const isDetail = isDetailPage(query)
+  const currentRoute = isDetail?pathname.slice(0,pathname.lastIndexOf('/')):pathname;
+  const isEqual = isPathEqual(currentRoute)
+  const {keys,paths} = getKeysAndPaths(data)
+  //if index === -1, item not found, else, found
+  const index = paths.findIndex(isEqual)
+  if(index===-1){
+    return {}
+  }
+  else{
+    let items = keys[index].split('/')
+    items = isDetail?items.concat(['Detail']):items
+    let path = paths[index]
+    path = path.endsWith('/')?path.slice(0,-1):path
+    return {items,path}
+  }
 }
