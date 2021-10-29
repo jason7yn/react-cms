@@ -17,6 +17,7 @@ import { throttle } from "lodash";
 import { useRouter } from "next/router";
 import { useRole } from "../../../../services/custom-hook";
 import Link from "next/link";
+import AppLayout from "../../../../component/Layout/layout";
 const { Search } = Input;
 export default function Student() {
   const role = useRole();
@@ -179,67 +180,70 @@ export default function Student() {
     []
   );
   return (
-    <div className="student-list-wrapper">
-      <Row justify="space-between" className="student-list-header">
-        <Col span={8}>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              setVisibility(true);
-              setFormValues({
-                type: "Add",
-                student: {
-                  name: "",
-                  country: "",
-                  email: "",
-                  type: "",
+    <AppLayout>
+      <div className="student-list-wrapper">
+        <Row justify="space-between" className="student-list-header">
+          <Col span={8}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setVisibility(true);
+                setFormValues({
+                  type: "Add",
+                  student: {
+                    name: "",
+                    country: "",
+                    email: "",
+                    type: "",
+                  },
+                });
+              }}
+            >
+              Add
+            </Button>
+            <ModalForm
+              visible={visibility}
+              cancel={() => {
+                setVisibility(false);
+              }}
+              formValues={formValues}
+              update={(record) => {
+                setStudentData({
+                  ...studentData,
+                  students: studentData.students.map((student) => {
+                    if (student.id == record.id) {
+                      return record;
+                    } else {
+                      return student;
+                    }
+                  }),
+                });
+              }}
+            />
+          </Col>
+          <Col span={6}>
+            <Search placeholder="Search by name" onChange={searchStudent} />
+          </Col>
+        </Row>
+        <Col span={24}>
+          <Spin spinning={loading}>
+            <Table
+              columns={columns}
+              dataSource={studentData.students}
+              pagination={{
+                pageSize: page.pageSize,
+                showSizeChanger: true,
+                onChange: (current, pageSize) => {
+                  setPage({ currentPage: current, pageSize: pageSize });
                 },
-              });
-            }}
-          >
-            Add
-          </Button>
-          <ModalForm
-            visible={visibility}
-            cancel={() => {
-              setVisibility(false);
-            }}
-            formValues={formValues}
-            update={(record) => {
-              setStudentData({
-                ...studentData,
-                students: studentData.students.map((student) => {
-                  if (student.id == record.id) {
-                    return record;
-                  } else {
-                    return student;
-                  }
-                }),
-              });
-            }}
-          />
+                total: `${studentData.total}`,
+              }}
+            />
+          </Spin>
         </Col>
-        <Col span={6}>
-          <Search placeholder="Search by name" onChange={searchStudent} />
-        </Col>
-      </Row>
-      <Col span={24}>
-        <Spin spinning={loading}>
-          <Table
-            columns={columns}
-            dataSource={studentData.students}
-            pagination={{
-              pageSize: page.pageSize,
-              showSizeChanger: true,
-              onChange: (current, pageSize) => {
-                setPage({ currentPage: current, pageSize: pageSize });
-              },
-              total: `${studentData.total}`,
-            }}
-          />
-        </Spin>
-      </Col>
-    </div>
+      </div>
+    </AppLayout>
+
   );
 }

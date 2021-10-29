@@ -1,11 +1,5 @@
 import { SideNav } from "./routes";
 import {isEmpty} from 'lodash'
-//根据routes结构和当前登录用户的ROLE，生成side menu（不变）
-//通过当前url与routes结构结合，动态改变menu的defaultopenedkey
-//来实现动态切换当前选择的side menu item （随url改变而改变）
-
-//当前页面为详情页时，menu item保持在parent上
-// url example: http://localhost:3000/dashboard/manager/students
 
 interface Query {
     id?:string
@@ -45,7 +39,7 @@ function generatePaths(data: SideNav[], parent = ""): string[][] {
     if (item.subNav && item.subNav.length) {
       return generatePaths(item.subNav, path).map((item) => item.join("/"));
     } else {
-      return [path].map((item) => `/dashboard/mananger/${item}`);
+      return [path].map((item) => `/dashboard/manager/${item}`);
     }
   });
   return paths;
@@ -64,7 +58,10 @@ function convert2DArray(keys2D: string[][],paths2D:string[][]) {
 
 function isPathEqual(target:string){
     return function(current:string){
+        console.log('target',target)
+        
         current = current.endsWith('/')?current.slice(0,-1):current
+        console.log('current',current)
         return current===target
     }
 }

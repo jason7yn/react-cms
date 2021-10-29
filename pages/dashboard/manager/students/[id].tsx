@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import apiService from "../../../../services/api-service";
 const { Title } = Typography;
 import Link from "next/link";
+
 //output: detail page
 //side effect: fetch student detail from server
 
@@ -119,12 +120,12 @@ export default function Details() {
         <Space direction="horizontal">
           {studentDetail.interest
             ? studentDetail.interest.map((element, index) => {
-                return (
-                  <Tag key={index} color={tagColor[index]}>
-                    {element}
-                  </Tag>
-                );
-              })
+              return (
+                <Tag key={index} color={tagColor[index]}>
+                  {element}
+                </Tag>
+              );
+            })
             : ""}
         </Space>
         <Title level={2}>Description</Title>
@@ -135,52 +136,55 @@ export default function Details() {
   };
 
   return (
-    <Row justify="space-around">
-      <Col span={8}>
-        <Card
-          title={
-            <Col span={8} offset={7}>
-              <Avatar size={120} src={studentDetail.avatar} />
-            </Col>
-          }
-        >
-          <Row style={{ textAlign: "center" }}>
-            <Col span={12}>
-              <b>Name:</b>
-              <p>{studentDetail.name}</p>
-            </Col>
-            <Col span={12} style={{ textAlign: "center" }}>
-              <b>Age:</b>
-              <p>{studentDetail.age}</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={12} style={{ textAlign: "center" }}>
-              <b>Email:</b>
-              <p>{studentDetail.email}</p>
-            </Col>
-            <Col span={12} style={{ textAlign: "center" }}>
-              <b>Phone:</b>
-              <p>{studentDetail.phone}</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={24} style={{ textAlign: "center" }}>
-              <b>Address:</b>
-              <p>{studentDetail.address}</p>
-            </Col>
-          </Row>
-        </Card>
-      </Col>
-      <Col span={14}>
-        <Card
-          tabList={tabList}
-          activeTabKey={tab.key}
-          onTabChange={(key) => setTab({ key: key })}
-        >
-          {tabListContent[tab.key]}
-        </Card>
-      </Col>
-    </Row>
+    <AppLayout>
+      <Row justify="space-around">
+        <Col span={8}>
+          <Card
+            title={
+              <Col span={8} offset={7}>
+                <Avatar size={120} src={studentDetail.avatar} />
+              </Col>
+            }
+          >
+            <Row style={{ textAlign: "center" }}>
+              <Col span={12}>
+                <b>Name:</b>
+                <p>{studentDetail.name}</p>
+              </Col>
+              <Col span={12} style={{ textAlign: "center" }}>
+                <b>Age:</b>
+                <p>{studentDetail.age}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12} style={{ textAlign: "center" }}>
+                <b>Email:</b>
+                <p>{studentDetail.email}</p>
+              </Col>
+              <Col span={12} style={{ textAlign: "center" }}>
+                <b>Phone:</b>
+                <p>{studentDetail.phone}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24} style={{ textAlign: "center" }}>
+                <b>Address:</b>
+                <p>{studentDetail.address}</p>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+        <Col span={14}>
+          <Card
+            tabList={tabList}
+            activeTabKey={tab.key}
+            onTabChange={(key) => setTab({ key: key })}
+          >
+            {tabListContent[tab.key]}
+          </Card>
+        </Col>
+      </Row>
+    </AppLayout>
+
   );
 }

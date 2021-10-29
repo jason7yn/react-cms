@@ -1,3 +1,8 @@
+import AppLayout from "../../../../component/Layout/layout";
 export default function Course() {
-  return <h1>Courses</h1>;
+  return (
+    <AppLayout>
+      <h1>Courses</h1>
+    </AppLayout>
+  );
 }

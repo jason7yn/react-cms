@@ -39,7 +39,6 @@ export default function AppLayout(props: PropsWithChildren<any>) {
   function renderSideMenu(sideNav: SideNav[], parent = ""): JSX.Element[] {
     return sideNav.map((item) => {
       if (item.subNav) {
-        console.log('parent path', item.path.join(''))
         return (
           <SubMenu key={`${item.label}`} icon={item.icon} title={item.label}>
             {renderSideMenu(item.subNav, item.path.join(""))}
