@@ -11,7 +11,11 @@ import {
     SolutionOutlined,
     TeamOutlined
 } from '@ant-design/icons';
-import { RouteLoaderEntry } from 'next/dist/client/route-loader';
+
+
+//根据routes结构和当前登录用户的ROLE，生成side menu（不变）
+//通过当前url与routes结构结合，实现动态选择side menu item （随url改变而改变）
+//根据当前url与routes结构结合，实现动态生成breadcrumb (随着url改变而改变)
 export enum RoutePath {
     manager = 'manager',
     teachers = 'teachers',
@@ -69,7 +73,7 @@ const teachers: SideNav = {
     ]
 }
 const overview: SideNav = {
-    path: [''],
+    path: [],
     label: 'Overview',
     icon: <DashboardOutlined />
 }

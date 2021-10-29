@@ -16,52 +16,40 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
-import { useState, useContext } from "react";
+import { useState, PropsWithChildren } from "react";
 import apiService from "../../services/api-service";
 import Link from "next/link";
 import AppBreadCrumb from "./breadcrumb";
-import { routes, sideNav } from "../../services/routes";
+import { routes, SideNav } from "../../services/routes";
 import { useRole } from "../../services/custom-hook";
-import { route } from "next/dist/server/router";
+import { getActiveKey } from "../../services/side-menu";
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
-import { isEmpty } from "lodash";
-import path from "path";
 
-export default function AppLayout(props) {
+
+export default function AppLayout(props: PropsWithChildren<any>) {
   const [collapsed, setCollapsed] = useState(false);
-  const [currentPath, setCurrentPath] = useState(["Overview"]);
   const router = useRouter();
   const role = useRole();
   const sideNav = routes.get(role);
-  //get current route without query
-  //search route in sideNav, if route == sideNav.path, return sideNav.subNav.label
-  const getActiveRoute = () => {
-    const pathname = router.pathname;
-    const path = pathname.split("/");
-    const query = router.query;
-    if (isEmpty(query)) {
-      return path;
-    } else {
-      path.pop();
-      return path;
-    }
-  };
-  const key = getActiveRoute();
-  console.log(key);
+  const key = getActiveKey(sideNav, router.pathname, router.query)
+  const defaultSelectedKeys = [key.split('/').pop()]
+  const defaultOpenKeys = key.split('/').slice(0, -1)
 
-  function renderSideMenu(sideNav: sideNav, parent = ""): JSX.Element {
-    return sideNav.map((item, index) => {
+  function renderSideMenu(sideNav: SideNav[], parent = ""): JSX.Element[] {
+    return sideNav.map((item) => {
       if (item.subNav) {
+        console.log('parent path', item.path.join(''))
         return (
           <SubMenu key={`${item.label}`} icon={item.icon} title={item.label}>
-            {renderSideMenu(item.subNav, item.path.join("/"))}
+            {renderSideMenu(item.subNav, item.path.join(""))}
           </SubMenu>
         );
       } else {
         return (
           <Menu.Item key={item.label} icon={item.icon}>
-            <Link href={`/dashboard/${role}/${parent}${item.path}`}>
+            {/* remove empty items, use join to convert array to string */}
+            <Link href={['/dashboard', role, parent, item.path].filter((item) => !!item).join('/')}>
               {item.label}
             </Link>
           </Menu.Item>
@@ -91,10 +79,8 @@ export default function AppLayout(props) {
         <Menu
           theme="dark"
           mode="inline"
-          selectedKeys={currentPath} //array
-          onSelect={(status) => {
-            setCurrentPath(status.keyPath);
-          }}
+          defaultOpenKeys={defaultOpenKeys}
+          defaultSelectedKeys={defaultSelectedKeys}
         >
           {sideMenu}
         </Menu>
