@@ -21,10 +21,10 @@ function generateKeys(data: SideNav[], parent = ""): string[][] {
       //[parent/child,parent/child]
       return generateKeys(item.subNav, key).map((item) => item.join("/"));
     } else {
-      return [key]; //string
+      return [key]; //string[]
     }
   });
-  return keys;
+  return keys;//string[][]
 }
 /**
  * genetate paths by extracting all path properties within sidenav
@@ -88,7 +88,13 @@ export function getActiveKey(data:SideNav[],pathname:string,query:Query):string{
     return keys[index]||''
 
 }
-
+/**
+ * get elements and path of breadcrumb
+ * @param data SideNav[]
+ * @param pathname current url
+ * @param query current query 
+ * @returns array with all items and path in string
+ */
 export function configBreadCrumbItems(data:SideNav[],pathname:string,query:Query){
   const isDetail = isDetailPage(query)
   const currentRoute = isDetail?pathname.slice(0,pathname.lastIndexOf('/')):pathname;
