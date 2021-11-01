@@ -10,10 +10,15 @@
 .trigger:hover {
   color: #1890ff;
 }
+#side-menu-container {
+}
+#contentLayout {
+}
 .dashboard-header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  z-index: 1;
 }
 .logo {
   height: 32px;

@@ -104,3 +104,19 @@ children components
       - ok button
    7. Join time(unclickable)
    8. Action
+
+### All Courses page
+
+1.  course card(antd card)
+    - img
+    - lectuer name
+    - date
+    - heart icon + number
+    - divider
+    - duration
+    - teacher (clickable)
+    - divider
+    - icon student limit
+    - button(read more)
+2.  back to top button
+3.  loading spinnner

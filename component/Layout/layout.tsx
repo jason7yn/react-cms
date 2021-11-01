@@ -4,73 +4,67 @@ import {
   MenuFoldOutlined,
   BellOutlined,
   UserOutlined,
-  DashboardOutlined,
-  ReadOutlined,
-  MessageOutlined,
-  SolutionOutlined,
-  DeploymentUnitOutlined,
-  TeamOutlined,
-  ProjectOutlined,
-  FileAddOutlined,
-  EditOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
-import { useState, PropsWithChildren } from "react";
+import { useState, PropsWithChildren, useCallback } from "react";
 import apiService from "../../services/api-service";
 import Link from "next/link";
 import AppBreadCrumb from "./breadcrumb";
 import { routes, SideNav } from "../../services/routes";
 import { useRole } from "../../services/custom-hook";
 import { getActiveKey } from "../../services/side-menu";
+import { getOverflowOptions } from "antd/lib/tooltip/placements";
+
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
-
 
 export default function AppLayout(props: PropsWithChildren<any>) {
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
   const role = useRole();
   const sideNav = routes.get(role);
-  const key = getActiveKey(sideNav, router.pathname, router.query)
-  const defaultSelectedKeys = [key.split('/').pop()]
-  const defaultOpenKeys = key.split('/').slice(0, -1)
+  const key = getActiveKey(sideNav, router.pathname, router.query);
+  const defaultSelectedKeys = [key.split("/").pop()];
+  const defaultOpenKeys = key.split("/").slice(0, -1);
 
-  function renderSideMenu(sideNav: SideNav[], parent = ""): JSX.Element[] {
-    return sideNav.map((item) => {
-      if (item.subNav) {
-        return (
-          <SubMenu key={`${item.label}`} icon={item.icon} title={item.label}>
-            {renderSideMenu(item.subNav, item.path.join(""))}
-          </SubMenu>
-        );
-      } else {
-        return (
-          <Menu.Item key={item.label} icon={item.icon}>
-            {/* remove empty items, use join to convert array to string */}
-            <Link href={['/dashboard', role, parent, item.path].filter((item) => !!item).join('/')}>
-              {item.label}
-            </Link>
-          </Menu.Item>
-        );
-      }
-    });
-  }
-  const sideMenu = renderSideMenu(sideNav);
-
-  const onCollapsed = () => {
-    setCollapsed(!collapsed);
-  };
-  const logout = () => {
-    apiService.logout().then(() => {
-      localStorage.removeItem("user");
-      router.push("/");
-    });
-  };
+  const renderSideMenu = useCallback(
+    (sideNav: SideNav[], parent = ""): JSX.Element[] => {
+      return sideNav.map((item) => {
+        if (item.subNav) {
+          return (
+            <SubMenu key={`${item.label}`} icon={item.icon} title={item.label}>
+              {renderSideMenu(item.subNav, item.path.join(""))}
+            </SubMenu>
+          );
+        } else {
+          return (
+            <Menu.Item key={item.label} icon={item.icon}>
+              {/* remove empty items, use join to convert array to string */}
+              <Link
+                href={["/dashboard", role, parent, item.path]
+                  .filter((item) => !!item)
+                  .join("/")}
+              >
+                {item.label}
+              </Link>
+            </Menu.Item>
+          );
+        }
+      });
+    },
+    [role]
+  );
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Sider collapsible collapsed={collapsed} onCollapse={onCollapsed}>
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sider id='side-menu-container'
+        collapsible
+        collapsed={collapsed}
+        onCollapse={() => {
+          setCollapsed(!collapsed);
+        }}
+      >
         <div className="logo">
           <h3>CMS</h3>
         </div>
@@ -81,12 +75,16 @@ export default function AppLayout(props: PropsWithChildren<any>) {
           defaultOpenKeys={defaultOpenKeys}
           defaultSelectedKeys={defaultSelectedKeys}
         >
-          {sideMenu}
+          {renderSideMenu(sideNav)}
         </Menu>
       </Sider>
-      <Layout>
+      <Layout id='contentLayout' >
         <Header className="dashboard-header">
-          <a onClick={onCollapsed}>
+          <a
+            onClick={() => {
+              setCollapsed(!collapsed);
+            }}
+          >
             {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </a>
 
@@ -99,7 +97,14 @@ export default function AppLayout(props: PropsWithChildren<any>) {
             <Col span={12}>
               <Dropdown
                 overlay={
-                  <Menu onClick={logout}>
+                  <Menu
+                    onClick={() => {
+                      apiService.logout().then(() => {
+                        localStorage.removeItem("user");
+                        router.push("/");
+                      });
+                    }}
+                  >
                     <Menu.Item key="1" icon={<LogoutOutlined />}>
                       Logout
                     </Menu.Item>
