@@ -1,38 +1,38 @@
 import AppLayout from "../../../../component/Layout/layout";
 import { CourseCard } from "../../../../component/courses/courseCard";
-import { List, Spin } from 'antd'
-import { useState, useEffect } from "react";
-import InfiniteScroll from 'react-infinite-scroll-component';
+import { List, Spin, BackTop } from "antd";
+import { VerticalAlignTopOutlined } from "@ant-design/icons";
+import { useState, useEffect, useCallback } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import apiService from "../../../../services/api-service";
 import { CourseData } from "../../../../services/models/courses";
 
-export default function Course() {
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0)
+export default function Course(): JSX.Element {
+  const [loading, setLoading] = useState<Boolean>(false);
+  const [data, setData] = useState<CourseData[]>([]);
+  const [page, setPage] = useState<Number>(1);
+  const [total, setTotal] = useState<Number>(0);
 
-  const loadMoreData = () => {
+  const loadMoreData = useCallback(() => {
     if (loading) {
       return;
     }
     setLoading(true);
-    apiService.getCourse({ page: page, limit: 20 })
+    apiService
+      .getCourse({ page: page, limit: 20 })
       .then((res) => {
         setData([...data, ...res.data.courses]);
-        setPage((prevPage) => {
-          return prevPage + 1;
-        })
-        setTotal(res.data.total)
+        setPage(page + 1);
+        setTotal(res.data.total);
         setLoading(false);
       })
       .catch(() => {
         setLoading(false);
-      })
-  }
+      });
+  }, [page, data, loading]);
   useEffect(() => {
     loadMoreData();
-  }, []);
+  }, []); //has caused infinite loop here if dependency is set to loadmoredata
 
   return (
     <AppLayout>
@@ -40,9 +40,9 @@ export default function Course() {
         dataLength={data.length}
         next={loadMoreData}
         hasMore={data.length < total}
-        loader={<Spin size='large' spinning={!loading} />}
-        endMessage='No More Course!'
-        scrollableTarget='contentLayout'
+        loader={<Spin size="large" spinning={!loading} />}
+        endMessage="No More Course!"
+        scrollableTarget="contentLayout"
       >
         <List
           dataSource={data}
@@ -51,7 +51,7 @@ export default function Course() {
             gutter: 14,
             xs: 1,
             sm: 2,
-            md: 2
+            md: 2,
           }}
           renderItem={(item: CourseData) => {
             return (
@@ -59,10 +59,13 @@ export default function Course() {
                 <CourseCard {...item} />
               </List.Item>
             );
-          }
-          }
+          }}
         />
       </InfiniteScroll>
+
+      <BackTop visibilityHeight={200} target={() => contentLayout}>
+        <VerticalAlignTopOutlined className="back-to-top" />
+      </BackTop>
     </AppLayout>
   );
 }

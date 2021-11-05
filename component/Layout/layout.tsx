@@ -1,4 +1,12 @@
-import { Layout, Menu, Badge, Row, Dropdown, Avatar, Col } from "antd";
+import {
+  Layout,
+  Menu,
+  Badge,
+  Row,
+  Dropdown,
+  Avatar,
+  Col,
+} from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -14,9 +22,8 @@ import AppBreadCrumb from "./breadcrumb";
 import { routes, SideNav } from "../../services/routes";
 import { useRole } from "../../services/custom-hook";
 import { getActiveKey } from "../../services/side-menu";
-import { getOverflowOptions } from "antd/lib/tooltip/placements";
 
-const { Header, Content, Sider } = Layout;
+const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
 export default function AppLayout(props: PropsWithChildren<any>) {
@@ -57,13 +64,15 @@ export default function AppLayout(props: PropsWithChildren<any>) {
   );
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider id='side-menu-container'
+    <Layout style={{ height: "100vh" }}>
+      <Sider
+        className="sider"
         collapsible
         collapsed={collapsed}
         onCollapse={() => {
           setCollapsed(!collapsed);
         }}
+        style={{ height: "inherit" }}
       >
         <div className="logo">
           <h3>CMS</h3>
@@ -78,7 +87,8 @@ export default function AppLayout(props: PropsWithChildren<any>) {
           {renderSideMenu(sideNav)}
         </Menu>
       </Sider>
-      <Layout id='contentLayout' >
+
+      <Layout id="contentLayout">
         <Header className="dashboard-header">
           <a
             onClick={() => {
@@ -116,17 +126,18 @@ export default function AppLayout(props: PropsWithChildren<any>) {
             </Col>
           </Row>
         </Header>
-        <Content>
-          <AppBreadCrumb />
-          <div
-            style={{
-              backgroundColor: "#fff",
-              margin: "16px",
-              padding: "16px",
-            }}
-          >
-            {props.children}
-          </div>
+
+        <AppBreadCrumb />
+
+        <Content
+          style={{
+            backgroundColor: "#fff",
+            margin: "16px",
+            padding: "16px",
+            minHeight: "auto",
+          }}
+        >
+          {props.children}
         </Content>
       </Layout>
     </Layout>
