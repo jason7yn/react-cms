@@ -1,18 +1,20 @@
 import AppLayout from "../../../../component/Layout/layout";
-import { CourseCard } from "../../../../component/courses/courseCard";
-import { List, Spin, BackTop } from "antd";
+import CourseCard from "../../../../component/courses/courseCard";
+import { List, Spin, BackTop, Button } from "antd";
 import { VerticalAlignTopOutlined } from "@ant-design/icons";
 import { useState, useEffect, useCallback } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import apiService from "../../../../services/api-service";
 import { CourseData } from "../../../../services/models/courses";
+import { useRole } from "../../../../services/custom-hook";
+import Link from "next/link";
 
 export default function Course(): JSX.Element {
   const [loading, setLoading] = useState<Boolean>(false);
   const [data, setData] = useState<CourseData[]>([]);
-  const [page, setPage] = useState<Number>(1);
-  const [total, setTotal] = useState<Number>(0);
-
+  const [page, setPage] = useState<number>(1);
+  const [total, setTotal] = useState<number>(0);
+  const role = useRole();
   const loadMoreData = useCallback(() => {
     if (loading) {
       return;
@@ -56,14 +58,18 @@ export default function Course(): JSX.Element {
           renderItem={(item: CourseData) => {
             return (
               <List.Item key={item.id}>
-                <CourseCard {...item} />
+                <CourseCard {...item} >
+                  <Link href={`/dashboard/${role}/courses/${item.id}`} passHref >
+                    <Button type="primary">Read More</Button>
+                  </Link>
+                </CourseCard>
               </List.Item>
             );
           }}
         />
       </InfiniteScroll>
 
-      <BackTop visibilityHeight={200} target={() => contentLayout}>
+      <BackTop visibilityHeight={200} target={() => document.getElementById('contentLayout')}>
         <VerticalAlignTopOutlined className="back-to-top" />
       </BackTop>
     </AppLayout>

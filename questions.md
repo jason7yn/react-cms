@@ -17,7 +17,7 @@ setState(prevState=>prevState+1)
 
 ### Lec 10 todo:
 
-1. what css property will be inherited
+1. what css property will be inherited done
 2. usecallback done
 3. position
 

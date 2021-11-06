@@ -120,3 +120,24 @@ children components
     - button(read more)
 2.  back to top button
 3.  loading spinnner
+
+### Course detail page
+
+1. col 1
+   card(course card)
+   price
+   batches
+   students
+   earnings
+2. col 2
+   course detail(string)
+   create time(string)
+   start time(string)
+   status - green dot
+   course code(string)
+   class time(table)
+   category(label)
+   description(string)
+   chapter(drop down)
+   status + label
+   click to view information

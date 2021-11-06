@@ -1,15 +1,16 @@
 import { PropsWithChildren } from "react";
-import { Card, Button, Col, Row } from "antd";
+import { Card, Col, Row } from "antd";
 import { HeartFilled, UserOutlined } from "@ant-design/icons";
 import { CourseData } from "../../services/models/courses";
 import Link from "next/link";
 
-export function CourseCard(props: PropsWithChildren<CourseData>): JSX.Element {
+export default function CourseCard(props: PropsWithChildren<CourseData>): JSX.Element {
   return (
     <Card
       cover={
-        <img alt="course cover" src={props.cover} style={{ height: "30%" }} />
+        <img alt="course cover" src={props.cover} style={{ height: "220px" }} />
       }
+
     >
       <Row>
         <h3>{props.name}</h3>
@@ -40,7 +41,7 @@ export function CourseCard(props: PropsWithChildren<CourseData>): JSX.Element {
         </Col>
         <Col>{props.maxStudents}</Col>
       </Row>
-      <Button type="primary">Read More</Button>
+      {props.children}
     </Card>
   );
 }
