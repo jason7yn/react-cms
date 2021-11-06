@@ -4,13 +4,14 @@ import { HeartFilled, UserOutlined } from "@ant-design/icons";
 import { CourseData } from "../../services/models/courses";
 import Link from "next/link";
 
-export default function CourseCard(props: PropsWithChildren<CourseData>): JSX.Element {
+export default function CourseCard(
+  props: PropsWithChildren<CourseData>
+): JSX.Element {
   return (
     <Card
       cover={
         <img alt="course cover" src={props.cover} style={{ height: "220px" }} />
       }
-
     >
       <Row>
         <h3>{props.name}</h3>

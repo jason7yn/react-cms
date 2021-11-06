@@ -1,6 +1,6 @@
 import AppLayout from "../../../../component/Layout/layout";
 import CourseCard from "../../../../component/courses/courseCard";
-import { List, Spin, BackTop, Button } from "antd";
+import { List, Spin, BackTop, Button, Divider } from "antd";
 import { VerticalAlignTopOutlined } from "@ant-design/icons";
 import { useState, useEffect, useCallback } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -43,7 +43,7 @@ export default function Course(): JSX.Element {
         next={loadMoreData}
         hasMore={data.length < total}
         loader={<Spin size="large" spinning={!loading} />}
-        endMessage="No More Course!"
+        endMessage={<Divider>No More Course!</Divider>}
         scrollableTarget="contentLayout"
       >
         <List
@@ -58,8 +58,8 @@ export default function Course(): JSX.Element {
           renderItem={(item: CourseData) => {
             return (
               <List.Item key={item.id}>
-                <CourseCard {...item} >
-                  <Link href={`/dashboard/${role}/courses/${item.id}`} passHref >
+                <CourseCard {...item}>
+                  <Link href={`courses/${item.id}`} passHref>
                     <Button type="primary">Read More</Button>
                   </Link>
                 </CourseCard>
@@ -69,7 +69,10 @@ export default function Course(): JSX.Element {
         />
       </InfiniteScroll>
 
-      <BackTop visibilityHeight={200} target={() => document.getElementById('contentLayout')}>
+      <BackTop
+        visibilityHeight={200}
+        target={() => document.getElementById("contentLayout")}
+      >
         <VerticalAlignTopOutlined className="back-to-top" />
       </BackTop>
     </AppLayout>
