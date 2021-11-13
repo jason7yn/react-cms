@@ -17,7 +17,9 @@ import { throttle } from "lodash";
 import { useRole } from "../../../../services/custom-hook";
 import Link from "next/link";
 import AppLayout from "../../../../component/Layout/layout";
+
 const { Search } = Input;
+
 export default function Student() {
   const role = useRole();
   const columns = [
@@ -210,7 +212,7 @@ export default function Student() {
               update={(record) => {
                 setStudentData({
                   ...studentData,
-                  students: studentData.students.map((student) => {
+                  students: studentData?.students.map((student) => {
                     if (student.id == record.id) {
                       return record;
                     } else {
@@ -229,20 +231,19 @@ export default function Student() {
           <Spin spinning={loading}>
             <Table
               columns={columns}
-              dataSource={studentData.students}
+              dataSource={studentData?.students}
               pagination={{
                 pageSize: page.pageSize,
                 showSizeChanger: true,
                 onChange: (current, pageSize) => {
                   setPage({ currentPage: current, pageSize: pageSize });
                 },
-                total: `${studentData.total}`,
+                total: `${studentData?.total}`,
               }}
             />
           </Spin>
         </Col>
       </div>
     </AppLayout>
-
   );
 }

@@ -59,7 +59,7 @@ export default function Course(): JSX.Element {
             return (
               <List.Item key={item.id}>
                 <CourseCard {...item}>
-                  <Link href={`courses/${item.id}`} passHref>
+                  <Link href={`courses/${item.id}`} >
                     <Button type="primary">Read More</Button>
                   </Link>
                 </CourseCard>

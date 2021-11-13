@@ -3,19 +3,19 @@ import { Row, Col, Card, Avatar, Typography, Space, Tag, Table } from "antd";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import apiService from "../../../../services/api-service";
-const { Title } = Typography;
+import { StudentData } from "../../../../services/models/students";
 import Link from "next/link";
 
-//output: detail page
-//side effect: fetch student detail from server
+const { Title } = Typography;
 
-//state: tab toggle, student detail
-export default function Details() {
+export default function Details(props: { id: string }) {
   const router = useRouter();
-  const [studentDetail, setStudentDetail] = useState({});
+  const [studentDetail, setStudentDetail] = useState<StudentData>(null);
   useEffect(() => {
-    apiService.getStudentById(router.query.id).then((res) => {
+    const id = router.query.id || props.id;
+    apiService.getStudentById(id).then((res) => {
       setStudentDetail(res.data);
+      console.log(studentDetail);
     });
   }, []);
   const [tab, setTab] = useState({ key: "about" });
@@ -78,61 +78,61 @@ export default function Details() {
             <b style={{ display: "inline-block", minWidth: "150px" }}>
               Education:
             </b>
-            <span>{studentDetail.education}</span>
+            <span>{studentDetail?.education}</span>
           </Col>
           <Col span={24}>
             <b style={{ display: "inline-block", minWidth: "150px" }}>Area</b>
-            <span>{studentDetail.country}</span>
+            <span>{studentDetail?.country}</span>
           </Col>
           <Col span={24}>
             <b style={{ display: "inline-block", minWidth: "150px" }}>
               Gender:
             </b>
-            <span>{studentDetail.gender == "1" ? "Male" : "Female"}</span>
+            <span>{studentDetail?.gender === 1 ? "Male" : "Female"}</span>
           </Col>
           <Col span={24}>
             <b style={{ display: "inline-block", minWidth: "150px" }}>
               Member Period:
             </b>
-            <span>{studentDetail.memberStartAt}</span>
+            <span>{studentDetail?.memberStartAt}</span>
             <span> - </span>
-            <span>{studentDetail.memberEndAt}</span>
+            <span>{studentDetail?.memberEndAt}</span>
           </Col>
           <Col span={24}>
             <b style={{ display: "inline-block", minWidth: "150px" }}>Type:</b>
-            <span>{studentDetail.type ? studentDetail.type.name : ""}</span>
+            <span>{studentDetail?.type ? studentDetail?.type.name : ""}</span>
           </Col>
           <Col span={24}>
             <b style={{ display: "inline-block", minWidth: "150px" }}>
               Create Time:
             </b>
-            <span>{studentDetail.createdAt}</span>
+            <span>{studentDetail?.createdAt}</span>
           </Col>
           <Col span={24}>
             <b style={{ display: "inline-block", minWidth: "150px" }}>
               Update Time:
             </b>
-            <span>{studentDetail.updatedAt}</span>
+            <span>{studentDetail?.updatedAt}</span>
           </Col>
         </Space>
 
         <Title level={2}>Interesting</Title>
         <Space direction="horizontal">
-          {studentDetail.interest
+          {studentDetail?.interest
             ? studentDetail.interest.map((element, index) => {
-              return (
-                <Tag key={index} color={tagColor[index]}>
-                  {element}
-                </Tag>
-              );
-            })
+                return (
+                  <Tag key={index} color={tagColor[index]}>
+                    {element}
+                  </Tag>
+                );
+              })
             : ""}
         </Space>
         <Title level={2}>Description</Title>
-        {studentDetail.description}
+        {studentDetail?.description}
       </Typography>
     ),
-    course: <Table columns={columns} dataSource={studentDetail.courses} />,
+    course: <Table columns={columns} dataSource={studentDetail?.courses} />,
   };
 
   return (
@@ -142,34 +142,34 @@ export default function Details() {
           <Card
             title={
               <Col span={8} offset={7}>
-                <Avatar size={120} src={studentDetail.avatar} />
+                <Avatar size={120} src={studentDetail?.avatar} />
               </Col>
             }
           >
             <Row style={{ textAlign: "center" }}>
               <Col span={12}>
                 <b>Name:</b>
-                <p>{studentDetail.name}</p>
+                <p>{studentDetail?.name}</p>
               </Col>
               <Col span={12} style={{ textAlign: "center" }}>
                 <b>Age:</b>
-                <p>{studentDetail.age}</p>
+                <p>{studentDetail?.age}</p>
               </Col>
             </Row>
             <Row>
               <Col span={12} style={{ textAlign: "center" }}>
                 <b>Email:</b>
-                <p>{studentDetail.email}</p>
+                <p>{studentDetail?.email}</p>
               </Col>
               <Col span={12} style={{ textAlign: "center" }}>
                 <b>Phone:</b>
-                <p>{studentDetail.phone}</p>
+                <p>{studentDetail?.phone}</p>
               </Col>
             </Row>
             <Row>
               <Col span={24} style={{ textAlign: "center" }}>
                 <b>Address:</b>
-                <p>{studentDetail.address}</p>
+                <p>{studentDetail?.address}</p>
               </Col>
             </Row>
           </Card>
@@ -185,6 +185,5 @@ export default function Details() {
         </Col>
       </Row>
     </AppLayout>
-
   );
 }

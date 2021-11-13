@@ -12,7 +12,7 @@ interface CourseType{
     id:number;
     name:string;
 }
-interface Chapter{
+export interface Chapter{
     createdAt:string;
     updatedAt:string;
     id:number;
@@ -31,7 +31,7 @@ interface Sale{
     studentAmount:number;
     paidIds:number[]
 }
-interface Schedule{
+export interface Schedule{
     createAt:string;
     updateAt:string;
     id:number;
@@ -41,7 +41,7 @@ interface Schedule{
     chapters:Chapter[];
 }
 export interface CourseData {
-    createAt:string;
+    createdAt:string;
     updateAt:string;
     id:number;
     cover:string;
@@ -66,4 +66,15 @@ export interface CourseDetail extends CourseData{
 
     schedule:Schedule;
     sales:Sale;
+}
+
+export enum CourseStatusText {
+    'finished',
+    'processing',
+    'pending',
+}
+export enum CourseStatusColor {
+    'default',
+    'green',
+    'orange',
 }

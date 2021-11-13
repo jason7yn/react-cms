@@ -61,3 +61,39 @@
 .back-to-top:hover {
   opacity: 0.8;
 }
+#sales-info-row {
+  width: calc(100% + 48px);
+  margin: 0 0 0 -24px;
+}
+
+.sales-info-col {
+  border: 1px solid #f0f0f0;
+  border-left: none;
+  border-bottom: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.sales-info-col b {
+  color: #7356f1;
+  font-size: 24px;
+}
+.sales-info-col p {
+  margin-bottom: 0;
+}
+#sales-info-row div:last-child {
+  border-right: none;
+}
+.step-row {
+  overflow-x: scroll;
+  /* scrollbar-width: none; */
+}
+::-webkit-scrollbar {
+  display: none;
+}
+.ant-steps-item-title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 6em;
+}

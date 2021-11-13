@@ -2,16 +2,17 @@ import { PropsWithChildren } from "react";
 import { Card, Col, Row } from "antd";
 import { HeartFilled, UserOutlined } from "@ant-design/icons";
 import { CourseData } from "../../services/models/courses";
-import Link from "next/link";
+import { CardProps } from "antd/lib/card";
 
 export default function CourseCard(
-  props: PropsWithChildren<CourseData>
+  props: PropsWithChildren<CourseData> & { cardProps?: CardProps }
 ): JSX.Element {
   return (
     <Card
       cover={
         <img alt="course cover" src={props.cover} style={{ height: "220px" }} />
       }
+      {...props.cardProps}
     >
       <Row>
         <h3>{props.name}</h3>
@@ -32,7 +33,8 @@ export default function CourseCard(
       <Row justify="space-between" style={{ borderBottom: "1px solid grey" }}>
         <Col>Teacher:</Col>
         <Col>
-          <Link href="/dashboard/manager">{props.teacherName}</Link>
+          {props.teacherName}
+          {/* <Link href="/dashboard/manager">{props.teacherName}</Link> */}
         </Col>
       </Row>
       <Row justify="space-between">

@@ -96,6 +96,7 @@ export function getActiveKey(data:SideNav[],pathname:string,query:Query):string{
  */
 export function configBreadCrumbItems(data:SideNav[],pathname:string,query:Query){
   const isDetail = isDetailPage(query)
+  console.log('in configbread',query)
   const currentRoute = isDetail?pathname.slice(0,pathname.lastIndexOf('/')):pathname;
   const isEqual = isPathEqual(currentRoute)
   const {keys,paths} = getKeysAndPaths(data)

@@ -4,11 +4,13 @@ import { useRouter } from "next/router";
 import { routes } from "../../services/routes";
 import { configBreadCrumbItems } from "../../services/side-menu";
 import { useRole } from "../../services/custom-hook";
+import { isEmpty } from "lodash";
 
 export default function AppBreadCrumb() {
   const router = useRouter();
   const pathname = router.pathname; //string - /dashboard/students etc
   const query = router.query;
+  console.log("query", query);
   const role = useRole();
   const sideNav = routes.get(role);
   const { items, path } = configBreadCrumbItems(sideNav, pathname, query);

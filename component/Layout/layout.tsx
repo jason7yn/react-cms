@@ -1,12 +1,4 @@
-import {
-  Layout,
-  Menu,
-  Badge,
-  Row,
-  Dropdown,
-  Avatar,
-  Col,
-} from "antd";
+import { Layout, Menu, Badge, Row, Dropdown, Avatar, Col } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -98,13 +90,15 @@ export default function AppLayout(props: PropsWithChildren<any>) {
             {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </a>
 
-          <Row align="middle" justify="space-around">
-            <Col span={12} offset={-2}>
-              <Badge count={33}>
-                <BellOutlined style={{ fontSize: 26, color: "white" }} />
+          <Row align="middle">
+            <Col span={8}>
+              <Badge count={33} offset={[13, 18]}>
+                <BellOutlined
+                  style={{ fontSize: 25, marginTop: 20, color: "white" }}
+                />
               </Badge>
             </Col>
-            <Col span={12}>
+            <Col span={8}>
               <Dropdown
                 overlay={
                   <Menu
@@ -121,7 +115,7 @@ export default function AppLayout(props: PropsWithChildren<any>) {
                   </Menu>
                 }
               >
-                <Avatar icon={<UserOutlined />} />
+                <Avatar style={{ marginLeft: "2em" }} icon={<UserOutlined />} />
               </Dropdown>
             </Col>
           </Row>
