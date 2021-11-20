@@ -1,7 +1,7 @@
 import axios from "axios";
 import AES from "crypto-js/aes";
 import { message } from "antd";
-import { CourseDetailRequest, CourseRequest } from "./models/courses";
+import { CourseDetailRequest, CourseRequest,AddCourseRequest,UpdateCourseRequest } from "./models/courses";
 
 const httpService = axios.create({
   baseURL: "https://cms.chtoma.com/api/"
@@ -87,6 +87,22 @@ const apiService = {
   },
   getCourseById(param:CourseDetailRequest){
     return reqHandler(httpService.get,'courses/detail',{params:param});
-  }
+  },
+  getCourseType(){
+    return reqHandler(httpService.get,'courses/type');
+  },
+  getCourseCode(){
+    return reqHandler(httpService.get,'courses/code')
+  },
+  addCourse(param:AddCourseRequest){
+    return reqHandler(httpService.post,'courses',param)
+  },
+  updateCourse(param:UpdateCourseRequest){
+    return reqHandler(httpService.put,'courses/schedule',param)
+  },
+  getTeacher(param:{query:string}){
+    return reqHandler(httpService.get,'teachers',{params:param})
+  },
+  
 };
 export default apiService;

@@ -7,19 +7,10 @@ import {
   Schedule,
   CourseStatusColor,
   CourseStatusText,
+  weekdays,
 } from "../../../../services/models/courses";
 import apiService from "../../../../services/api-service";
 import { useRouter } from "next/router";
-
-const weekdays = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
 
 export default function Details(props: PropsWithChildren<any>) {
   const [data, setData] = useState<CourseDetail>();
@@ -104,7 +95,11 @@ export default function Details(props: PropsWithChildren<any>) {
             <h3>Start Time</h3>
             <p>{data?.startTime}</p>
 
-            <Badge status="success" offset={[5, 6]} dot={true}>
+            <Badge
+              status="success"
+              style={{ top: "5px", right: "-5px" }}
+              dot={true}
+            >
               <h3>Status</h3>
             </Badge>
 

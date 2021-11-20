@@ -1,12 +1,42 @@
-import internal from "stream";
 
 
+export enum DurationUnit {
+    'year' = 1,
+    'month',
+    'day' ,
+    'week' ,
+    'hour' 
+  }
 export interface CourseRequest {
-    page:number;
-    limit:number;
+    page?:number;
+    limit?:number;
+    uid?:string;
+    userId?:number;
+    name?:string;
+    type?:string;
+
 }
 export interface CourseDetailRequest{
     id:string|string[]
+}
+export interface AddCourseRequest{
+    cover: string;
+    detail: string;
+    duration:number;
+    durationUnit:number;
+    maxStudents: number;
+    name: string;
+    price: number;
+    startTime: string;
+    teacherId: number;
+    type: number[]|string[];
+    uid: string;
+}
+export  interface UpdateCourseRequest{
+    courseId:number;
+    scheduleId:number;
+    chapters:{name:string,content:string,order:number}[];
+    classTime:string[]
 }
 interface CourseType{
     id:number;
@@ -50,12 +80,12 @@ export interface CourseData {
     durationUnit:number;
     maxStudents:number;
     name:string;
-    price:internal;
+    price:number;
     uid:string;
     star:number;
     startTime:string;
     status:number;
-    scheduledId:number;
+    scheduleId:number;
     teacherId:number;
     type:CourseType[];
     teacherName:string;
@@ -78,3 +108,12 @@ export enum CourseStatusColor {
     'green',
     'orange',
 }
+export const weekdays = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];

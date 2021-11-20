@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { routes } from "../../services/routes";
 import { configBreadCrumbItems } from "../../services/side-menu";
 import { useRole } from "../../services/custom-hook";
-import { isEmpty } from "lodash";
 
 export default function AppBreadCrumb() {
   const router = useRouter();

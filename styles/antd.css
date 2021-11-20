@@ -97,3 +97,30 @@
   overflow: hidden;
   max-width: 6em;
 }
+.duration-selection .ant-select-selector {
+  height: 100% !important;
+}
+.add-course-description {
+  height: 100%;
+}
+.add-course-description .ant-form-item-control-input {
+  height: 100%;
+}
+.ant-form-item-control-input-content {
+  height: 100%;
+}
+.input-text {
+  height: calc(100% - 24px) !important;
+}
+.attachment {
+  height: 100%;
+}
+.attachment .ant-form-item-control-input {
+  height: 100%;
+}
+.attachment .ant-upload {
+  height: calc(100% - 24px);
+}
+.search-course-input {
+  margin-bottom: 8px;
+}
