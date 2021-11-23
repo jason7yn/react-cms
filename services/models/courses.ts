@@ -1,5 +1,14 @@
 
-
+export interface AddCourseFormProps{
+    course?: CourseData;
+  onSuccess?: (course: CourseData) => void;
+}
+export interface AddChapterFormProps {
+    courseId?: number;
+    scheduleId?: number;
+    onSuccess?: () => void;
+    isAdd?: boolean;
+  }
 export enum DurationUnit {
     'year' = 1,
     'month',

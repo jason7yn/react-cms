@@ -48,7 +48,10 @@ export default function EditCourse() {
     <AppLayout>
       <Row gutter={[8, 16]}>
         <Col span={12}>
-          <Input.Group compact size="large" style={{ display: "flex" }}>
+          <Input.Group
+            compact
+            style={{ display: "flex", marginBottom: "20px" }}
+          >
             <Select
               defaultValue="uid"
               onChange={(value) => setSearchBy(value)}
@@ -67,6 +70,10 @@ export default function EditCourse() {
               style={{ flex: 1 }}
               onSearch={(value) => {
                 search(value);
+              }}
+              onSelect={(id) => {
+                const course = searchResult.find((item) => item.id === id);
+                setCourse(course);
               }}
             >
               {searchResult.map(({ id, name, teacherName, uid }) => (

@@ -94,6 +94,9 @@ const apiService = {
   getCourseCode(){
     return reqHandler(httpService.get,'courses/code')
   },
+  getScheduleById(param){
+    return reqHandler(httpService.get,'courses/schedule',{params:param})
+  },
   addCourse(param:AddCourseRequest){
     return reqHandler(httpService.post,'courses',param)
   },

@@ -9,12 +9,17 @@ import {
   TimePicker,
 } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { weekdays } from "../../services/models/courses";
+import { weekdays, AddChapterFormProps } from "../../services/models/courses";
 import { useState, useEffect } from "react";
 import moment from "moment";
 import apiService from "../../services/api-service";
 
-export default function UpdateChapterForm(props) {
+export default function UpdateChapterForm({
+  courseId,
+  onSuccess,
+  scheduleId,
+  isAdd = true,
+}: AddChapterFormProps) {
   const [form] = Form.useForm();
   const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
   const initialValues = {
@@ -24,8 +29,8 @@ export default function UpdateChapterForm(props) {
 
   const onFinish = (values) => {
     const param = {
-      courseId: props.courseId,
-      scheduleId: props.scheduleId,
+      courseId: courseId,
+      scheduleId: scheduleId,
       chapters: values.chapters.map((chp, index) => {
         return { ...chp, order: index + 1 };
       }),
@@ -34,9 +39,29 @@ export default function UpdateChapterForm(props) {
       }),
     };
     apiService.updateCourse(param).then((res) => {
-      props.onSuccess();
+      onSuccess();
     });
   };
+  useEffect(() => {
+    (async () => {
+      if (!scheduleId || isAdd) {
+        return;
+      }
+
+      const { data } = await apiService.getScheduleById({ scheduleId });
+
+      if (!!data) {
+        const classTimes = data.classTime.map((item) => {
+          const [weekdays, time] = item.split(" ");
+
+          return { weekdays, time: moment(time, "hh:mm:ss") };
+        });
+
+        form.setFieldsValue({ chapters: data.chapters, classTime: classTimes });
+        setSelectedWeekdays(classTimes.map((item) => item.weekday));
+      }
+    })();
+  }, [scheduleId]);
 
   return (
     <Form form={form} onFinish={onFinish} initialValues={initialValues}>
